@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Lecture notes, homework and R code for STAT UN2103 Applied Linear Regression, Fall 2026.">
+<title>STAT 2103 Notebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lab-notebook ledger — a narrow left rail of dates, wide right column of entries; graph-paper hero with a fitted line and its residuals. Accent borrows the pink pen used in the handwritten notes. */
+:root{
+  --paper:#f6f8fa; --sheet:#ffffff; --ink:#152033; --muted:#5a6678; --rule:#dfe4ea; --grid:#e8edf2;
+  --pen:#c8326f; --pen-soft:#fbe7ef; --teal:#13707a; --teal-soft:#e1f1f2;
+  --code-bg:#f2f5f8; --kw:#8a2b8f; --str:#1f7a3d; --num:#b4541a; --com:#7b8594;
+  --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10151d; --sheet:#161d27; --ink:#e7ecf2; --muted:#9aa6b6; --rule:#28323f; --grid:#1c2531;
+  --pen:#f06a9f; --pen-soft:#3a1d2a; --teal:#5cc4cc; --teal-soft:#14303a;
+  --code-bg:#0f141b; --kw:#d59be0; --str:#7fd39a; --num:#f0a36a; --com:#7d8898; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#10151d; --sheet:#161d27; --ink:#e7ecf2; --muted:#9aa6b6; --rule:#28323f; --grid:#1c2531;
+  --pen:#f06a9f; --pen-soft:#3a1d2a; --teal:#5cc4cc; --teal-soft:#14303a;
+  --code-bg:#0f141b; --kw:#d59be0; --str:#7fd39a; --num:#f0a36a; --com:#7d8898; color-scheme:dark }
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font:16px/1.6 var(--body);margin:0}
+a{color:var(--teal);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--pen);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.bar .wrap{display:flex;align-items:center;gap:20px;padding-block:10px;flex-wrap:wrap}
+.brand{font:700 15px/1 var(--display);letter-spacing:.02em;color:var(--ink);text-decoration:none;margin-right:auto}
+.brand span{color:var(--pen)}
+.bar nav{display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font:500 14px/1 var(--body);color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:6px}
+.bar nav a:hover{color:var(--ink);background:var(--grid)}
+
+/* hero */
+.hero{padding-block:48px 36px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:center}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--pen);margin:0 0 14px}
+h1{font:700 clamp(36px,5.4vw,60px)/1.02 var(--display);letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance}
+.lede{color:var(--muted);max-width:52ch;margin:0 0 22px}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.stats li{display:flex;flex-direction:column}
+.stats b{font:600 28px/1 var(--display);font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--muted)}
+.plot{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:14px 14px 10px}
+.plot svg{display:block;width:100%;height:auto}
+.plot figcaption{font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:6px}
+
+/* sections */
+section{padding-block:40px;border-top:1px solid var(--rule)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+h2{font:700 30px/1.1 var(--display);letter-spacing:-.01em;margin:0}
+.sec-head p{margin:0;color:var(--muted);font-size:14px;max-width:60ch}
+h3{font:600 19px/1.25 var(--display);margin:0;text-wrap:balance}
+
+/* lectures ledger */
+.unit{margin:28px 0 10px;font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;gap:12px;align-items:center}
+.unit::after{content:"";flex:1;height:1px;background:var(--rule)}
+.ledger{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.entry{display:grid;grid-template-columns:88px 92px minmax(0,1fr);gap:20px;padding-block:18px;border-bottom:1px dashed var(--rule);align-items:start}
+.date{font:600 15px/1.2 var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.date small{display:block;font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:3px}
+.thumb{display:block;width:92px;aspect-ratio:425/550;max-width:100%;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:#fff}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s}
+.thumb:hover img{transform:scale(1.04)}
+.entry-body{min-width:0;display:grid;gap:8px}
+.entry-body p{margin:0;color:var(--muted);font-size:15px}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--body);padding:7px 10px;border-radius:999px;text-decoration:none;border:1px solid var(--rule);color:var(--ink);background:var(--sheet)}
+.chip:hover{border-color:var(--ink)}
+.chip.pdf{background:var(--pen-soft);border-color:transparent;color:var(--pen)}
+.chip.r{background:var(--teal-soft);border-color:transparent;color:var(--teal)}
+.chip .k{font:500 11px/1 var(--mono);letter-spacing:.04em;opacity:.8}
+
+/* homework */
+.hw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.hw{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px;display:grid;grid-template-columns:76px minmax(0,1fr);gap:18px;align-items:start}
+.hw .thumb{width:76px}
+.hw ol{margin:8px 0 12px;padding-left:20px;font-size:14px;color:var(--muted)}
+.hw ol li{margin:2px 0}
+.hw .meta{font:400 12px/1.4 var(--mono);color:var(--muted)}
+.data-tag{font:500 12px/1 var(--mono);background:var(--grid);color:var(--ink);padding:3px 6px;border-radius:4px}
+
+/* code */
+.code-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;align-items:start}
+.code-list{list-style:none;margin:0;padding:0;display:grid;gap:4px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px)}
+.code-list button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;padding:10px 12px;border-radius:8px;display:grid;gap:2px;border:1px solid transparent}
+.code-list button:hover{background:var(--grid)}
+.code-list button[aria-selected="true"]{background:var(--sheet);border-color:var(--rule)}
+.code-list button[aria-selected="true"] .t{color:var(--teal)}
+.code-list .t{font:600 15px/1.3 var(--display)}
+.code-list .s{font:400 12px/1.3 var(--mono);color:var(--muted)}
+.viewer{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;min-width:0;overflow:hidden}
+.viewer-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid var(--rule)}
+.viewer-head h3{font-size:20px}
+.viewer-head p{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:62ch}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button.chip{cursor:pointer}
+.note{font-size:13px;color:var(--muted);padding:10px 18px;background:var(--grid);border-bottom:1px solid var(--rule)}
+.note code{font-family:var(--mono);font-size:12px}
+pre.code{margin:0;max-height:560px;overflow:auto;background:var(--code-bg);padding:16px 18px;font:13px/1.6 var(--mono);color:var(--ink);tab-size:2}
+pre.code code{font:inherit;background:none;padding:0}
+.hljs-keyword,.hljs-built_in,.hljs-literal{color:var(--kw)}
+.hljs-string{color:var(--str)}
+.hljs-number{color:var(--num)}
+.hljs-comment{color:var(--com);font-style:italic}
+.hljs-operator,.hljs-punctuation{color:var(--ink)}
+
+footer{padding-block:32px 48px;border-top:1px solid var(--rule);color:var(--muted);font-size:13px}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;padding-block:32px 24px}
+  .hw-grid{grid-template-columns:1fr}
+  .code-layout{grid-template-columns:1fr}
+  .code-list{position:static;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+}
+@media (max-width:560px){
+  .entry{grid-template-columns:64px minmax(0,1fr);gap:14px}
+  .entry .date{grid-column:1/-1}
+  .thumb{width:64px}
+  .hw{grid-template-columns:1fr}
+  .hw .thumb{display:none}
+  .bar nav a{padding:6px 8px}
+  .stats{gap:18px}
+  .stats b{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top">STAT 2103 <span>·</span> Notebook</a>
+    <nav aria-label="Sections">
+      <a href="#lectures">Lectures</a>
+      <a href="#homework">Homework</a>
+      <a href="#rcode">R code</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <div>
+      <p class="eyebrow">Columbia · Fall 2026 · STAT UN2103</p>
+      <h1>Applied Linear Regression</h1>
+      <p class="lede">Lecture notes, problem sets and R examples for the course, collected in one place and in the order they were taught. From probability review through inference on the slope.</p>
+      <ul class="stats">
+        <li><b id="n-lec">9</b><span>lectures</span></li>
+        <li><b id="n-pages">104</b><span>pages of notes</span></li>
+        <li><b>4</b><span>homeworks</span></li>
+        <li><b>6</b><span>R examples</span></li>
+      </ul>
+    </div>
+    <figure class="plot" style="margin:0">
+      <svg id="hero-plot" viewBox="0 0 420 270" role="img" aria-label="Scatter plot of simulated points with a fitted least squares line and residuals drawn as vertical segments"></svg>
+      <figcaption>ŷ = 158.2 + 16.9x · vocabulary size vs. infant-directed words (simulated around the fit in the Oct 12 example)</figcaption>
+    </figure>
+  </div>
+
+  <section id="lectures">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Lectures</h2>
+        <p>Handwritten notes, scanned per class. Click a page to open the full PDF. Related R examples and homework are linked beside each date.</p>
+      </div>
+      <div id="ledger"></div>
+    </div>
+  </section>
+
+  <section id="homework">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Homework</h2>
+        <p>Problem sets with the topics each question covers. Data files named in a problem are listed at the bottom of its card.</p>
+      </div>
+      <div class="hw-grid" id="hw-grid"></div>
+    </div>
+  </section>
+
+  <section id="rcode">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>R code</h2>
+        <p>Each class example as a runnable <code>.R</code> script, with the explanation kept as comments. Open the notebook to see the original output and plots.</p>
+      </div>
+      <div class="code-layout">
+        <ul class="code-list" id="code-list" role="tablist" aria-label="R examples"></ul>
+        <div class="viewer" id="viewer" role="tabpanel">
+          <div class="viewer-head">
+            <div style="min-width:0">
+              <h3 id="v-title">Loading…</h3>
+              <p id="v-intro"></p>
+            </div>
+            <div class="btns">
+              <button class="chip r" id="v-copy" type="button">Copy code</button>
+              <a class="chip" id="v-raw" href="#" target="_blank" rel="noopener">Open .R</a>
+              <a class="chip" id="v-nb" href="#" target="_blank" rel="noopener">Rendered notebook</a>
+            </div>
+          </div>
+          <div class="note" id="v-note" hidden></div>
+          <pre class="code"><code id="v-code" class="language-r"></code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Emmy Davis · STAT UN2103 Applied Linear Regression, Columbia University, Fall 2026. Homework problems and R examples are course materials from the instructor; notes are handwritten class notes.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+const EX = {
+  "binom-normal":{title:"Binomial & Normal distributions",intro:"Left-handedness in samples of 10: dbinom, pbinom, rbinom, then the Normal with dnorm, pnorm and qnorm.",chunks:35},
+  "lln-and-clt":{title:"Law of Large Numbers & CLT",intro:"Blood pressure ~ Normal(120, 10): how sample averages settle down and become Normal as n grows.",chunks:26},
+  "fitting-lines":{title:"Fitting lines",intro:"Economic voting: income growth vs. incumbent party vote share, and choosing the line that minimizes squared vertical distance.",chunks:12},
+  "simulating-regression":{title:"Simulating regression",intro:"Sample 50 students' SAT and GPA, fit lm(), and see how the estimated line changes from sample to sample.",chunks:19,data:"academics.csv"},
+  "simulating-regression-2":{title:"Simulating regression, part 2",intro:"Generate data from a known population line with random error, then compare fits when σ = 10 versus σ = 50.",chunks:16},
+  "slr-inference":{title:"Inference for SLR",intro:"Infant vocabulary vs. words spoken: confidence intervals and t tests for the slope, by hand and with confint() and summary().",chunks:19,data:"language.Rdata"}
+};
+const LEC = [
+  {unit:"Part I · Probability and inference review"},
+  {d:"Sep 14",dow:"Mon",slug:"2026-09-14-probability-fundamentals",t:"Probability fundamentals",p:13,desc:"Random variables, expectation, variance, covariance, joint and conditional distributions.",ex:[],hw:[1]},
+  {d:"Sep 16",dow:"Wed",slug:"2026-09-16-binomial-and-normal",t:"Binomial and Normal distributions",p:14,desc:"Counting successes in n trials; the Normal density, standardizing, and percentiles.",ex:["binom-normal"],hw:[1,2]},
+  {d:"Sep 21",dow:"Mon",slug:"2026-09-21-sampling-distributions",t:"Sampling distributions & limit theorems",p:10,desc:"The sample mean as a random variable; Law of Large Numbers and Central Limit Theorem.",ex:["lln-and-clt"],hw:[2]},
+  {d:"Sep 23",dow:"Wed",slug:"2026-09-23-confidence-intervals",t:"Confidence intervals",p:12,desc:"Intervals for a mean and a proportion; when to use z versus t.",ex:[],hw:[2,3]},
+  {d:"Sep 28",dow:"Mon",slug:"2026-09-28-hypothesis-tests",t:"Hypothesis tests",p:12,desc:"Null and alternative hypotheses, test statistics, p-values and rejection thresholds.",ex:[],hw:[3]},
+  {unit:"Part II · Simple linear regression"},
+  {d:"Sep 30",dow:"Wed",slug:"2026-09-30-linear-regression-intro",t:"Introduction to linear regression",p:10,desc:"Predictor and response, and defining the line that is “closest” to the points: least squares.",ex:["fitting-lines"],hw:[3,4]},
+  {d:"Oct 5",dow:"Mon",slug:"2026-10-05-interpreting-regression",t:"Interpreting linear regression",p:11,desc:"Reading the slope and intercept in context, their units, and predicting at x̄.",ex:["simulating-regression"],hw:[4]},
+  {d:"Oct 7",dow:"Wed",slug:"2026-10-07-regression-assumptions",t:"Linear regression assumptions",p:10,desc:"The population model Y = β₀ + β₁X + ε, and what the error variance does to estimates.",ex:["simulating-regression-2"],hw:[4]},
+  {d:"Oct 12",dow:"Mon",slug:"2026-10-12-slr-inference",t:"Inference for simple linear regression",p:12,desc:"Estimating σ², the standard error of the slope, t intervals and tests with n − 2 df.",ex:["slr-inference"],hw:[]}
+];
+const HW = [
+  {n:1,p:2,topics:["Expectation, variance and covariance from a PMF","Standardizing: E and var of (X − μ)/σ","Joint and conditional distributions (USB tries)","Binomial reasoning: which route to take","Correlation of GRE math and verbal; histogram of differences"],data:["scores.csv"]},
+  {n:2,p:2,topics:["GRE verbal scores vs. a Normal(151, 8²) overlay; simulation","Binomial probabilities: homeschooled children in Alaska","Normal percentiles: daily and weekly birdseed","Sea turtle sex ratio: expected count, tail probability, 95% CI"],data:["scores.csv"]},
+  {n:3,p:2,topics:["90% t interval for triathlete heart rate","Distribution of a standardized Normal","One-sided test for a proportion: bottle breakage","Two-sided z test: uranium concentration at α = 0.05 and 0.01","First regression: car weight vs. 0–60 time"],data:["cars.csv"]},
+  {n:4,p:3,topics:["Least squares fit: hurricane pressure vs. wind speed","Interpretation, units, prediction and extrapolation","Prediction at x̄, effect of one sₓ, residual for Harvey","Which sample gives a more precise slope? (three comparisons)"],data:["hurricanes.csv"]}
+];
+
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// Lectures
+(function(){
+  let html = "", list = null, pages = 0;
+  for (const L of LEC){
+    if (L.unit){ if (list) html += "</ol>"; html += `<div class="unit">${esc(L.unit)}</div><ol class="ledger">`; list = true; continue; }
+    pages += L.p;
+    const ex = L.ex.map(k => `<a class="chip r" href="#rcode" data-ex="${k}"><span class="k">R</span>${esc(EX[k].title)}</a>`).join("");
+    const hw = L.hw.map(n => `<a class="chip" href="#hw${n}"><span class="k">HW</span>${n}</a>`).join("");
+    html += `<li class="entry">
+      <div class="date">${L.d}<small>${L.dow} · ${L.p} pp.</small></div>
+      <a class="thumb" href="notes/${L.slug}.pdf" target="_blank" rel="noopener" aria-label="Open notes for ${esc(L.t)}"><img src="thumbs/${L.slug}.jpg" alt="" loading="lazy"></a>
+      <div class="entry-body">
+        <h3>${esc(L.t)}</h3>
+        <p>${esc(L.desc)}</p>
+        <div class="links"><a class="chip pdf" href="notes/${L.slug}.pdf" target="_blank" rel="noopener"><span class="k">PDF</span>Notes</a>${ex}${hw}</div>
+      </div></li>`;
+  }
+  html += "</ol>";
+  document.getElementById("ledger").innerHTML = html;
+  document.getElementById("n-pages").textContent = pages;
+})();
+
+// Homework
+document.getElementById("hw-grid").innerHTML = HW.map(h => `
+  <article class="hw" id="hw${h.n}">
+    <a class="thumb" href="assignments/hw${h.n}.pdf" target="_blank" rel="noopener" aria-label="Open Homework ${h.n}"><img src="thumbs/hw${h.n}.jpg" alt="" loading="lazy"></a>
+    <div style="min-width:0">
+      <h3>Homework ${h.n}</h3>
+      <ol>${h.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ol>
+      <div class="links">
+        <a class="chip pdf" href="assignments/hw${h.n}.pdf" target="_blank" rel="noopener"><span class="k">PDF</span>${h.p} pages</a>
+        ${h.data.map(d => `<span class="data-tag">${d}</span>`).join("")}
+      </div>
+    </div>
+  </article>`).join("");
+
+// R code viewer
+const keys = Object.keys(EX);
+const listEl = document.getElementById("code-list");
+listEl.innerHTML = keys.map(k => `<li><button type="button" role="tab" id="tab-${k}" data-k="${k}" aria-selected="false"><span class="t">${esc(EX[k].title)}</span><span class="s">${k}.R · ${EX[k].chunks} chunks</span></button></li>`).join("");
+let current = null;
+async function show(k){
+  if (!EX[k]) return;
+  current = k;
+  listEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", b.dataset.k === k));
+  const e = EX[k];
+  document.getElementById("v-title").textContent = e.title;
+  document.getElementById("v-intro").textContent = e.intro;
+  document.getElementById("v-raw").href = `code/${k}.R`;
+  document.getElementById("v-nb").href = `examples/${k}.html`;
+  const note = document.getElementById("v-note");
+  if (e.data){ note.hidden = false; note.innerHTML = `Uses <code>${e.data}</code>, which isn't in this repo. Put it in a <code>data/</code> folder and change the file path in the script to <code>data/${e.data}</code>.`; }
+  else note.hidden = true;
+  const codeEl = document.getElementById("v-code");
+  codeEl.textContent = "Loading…";
+  try{
+    const r = await fetch(`code/${k}.R`);
+    if (!r.ok) throw new Error(r.status);
+    const txt = await r.text();
+    if (current !== k) return;
+    codeEl.textContent = txt;
+    codeEl.removeAttribute("data-highlighted");
+    if (window.hljs) hljs.highlightElement(codeEl);
+  }catch(err){
+    codeEl.textContent = `Couldn't load code/${k}.R. Open it directly with the "Open .R" button.`;
+  }
+}
+listEl.addEventListener("click", ev => { const b = ev.target.closest("button[data-k]"); if (b) show(b.dataset.k); });
+document.addEventListener("click", ev => { const a = ev.target.closest("a[data-ex]"); if (a) show(a.dataset.ex); });
+document.getElementById("v-copy").addEventListener("click", async ev => {
+  const btn = ev.currentTarget, text = document.getElementById("v-code").textContent;
+  try{ await navigator.clipboard.writeText(text); btn.textContent = "Copied"; }
+  catch(_){ const sel = getSelection(), rg = document.createRange(); rg.selectNodeContents(document.getElementById("v-code")); sel.removeAllRanges(); sel.addRange(rg); btn.textContent = "Selected — press Ctrl/⌘+C"; }
+  setTimeout(() => btn.textContent = "Copy code", 1800);
+});
+show("slr-inference");
+
+// Hero plot: points simulated around the Oct 12 fitted line, residuals drawn in pen color
+(function(){
+  const svg = document.getElementById("hero-plot"), NS = "http://www.w3.org/2000/svg";
+  const W=420,H=270,m={l:44,r:12,t:12,b:34};
+  const x0=0,x1=10,y0=100,y1=400;
+  const sx=x=>m.l+(x-x0)/(x1-x0)*(W-m.l-m.r), sy=y=>H-m.b-(y-y0)/(y1-y0)*(H-m.t-m.b);
+  let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const norm=()=>Math.sqrt(-2*Math.log(rnd()))*Math.cos(2*Math.PI*rnd());
+  const f=x=>158.17+16.88*x;
+  const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
+  for(let y=100;y<=400;y+=50){el("line",{x1:m.l,x2:W-m.r,y1:sy(y),y2:sy(y),stroke:"var(--grid)","stroke-width":1});el("text",{x:m.l-8,y:sy(y)+4,"text-anchor":"end","font-size":11,fill:"var(--muted)","font-family":"JetBrains Mono, monospace"}).textContent=y;}
+  for(let x=0;x<=10;x+=2){el("line",{y1:m.t,y2:H-m.b,x1:sx(x),x2:sx(x),stroke:"var(--grid)","stroke-width":1});el("text",{x:sx(x),y:H-m.b+16,"text-anchor":"middle","font-size":11,fill:"var(--muted)","font-family":"JetBrains Mono, monospace"}).textContent=x;}
+  el("text",{x:(m.l+W-m.r)/2,y:H-4,"text-anchor":"middle","font-size":11,fill:"var(--muted)","font-family":"IBM Plex Sans, sans-serif"}).textContent="words spoken daily (1000s)";
+  const pts=[];for(let i=0;i<30;i++){const x=1+rnd()*8.5;pts.push([x,f(x)+norm()*44.8]);}
+  for(const [x,y] of pts) el("line",{x1:sx(x),x2:sx(x),y1:sy(y),y2:sy(f(x)),stroke:"var(--pen)","stroke-width":1.2,opacity:.55});
+  el("line",{x1:sx(0),x2:sx(10),y1:sy(f(0)),y2:sy(f(10)),stroke:"var(--teal)","stroke-width":2.5,"stroke-linecap":"round"});
+  for(const [x,y] of pts) el("circle",{cx:sx(x),cy:sy(y),r:3.4,fill:"var(--sheet)",stroke:"var(--ink)","stroke-width":1.4});
+})();
+</script>
+</body>
+</html>
