@@ -3,351 +3,446 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Lecture notes, homework and R code for STAT UN2103 Applied Linear Regression, Fall 2026.">
-<title>STAT 2103 Notebook</title>
+<meta name="description" content="Typed lecture notes, explained R code and homework guides for STAT UN2103 Applied Linear Regression, Fall 2026.">
+<title>STAT 2103 Study Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: lab-notebook ledger — a narrow left rail of dates, wide right column of entries; graph-paper hero with a fitted line and its residuals. Accent borrows the pink pen used in the handwritten notes. */
+/* Layout: same RStudio-like split as the STAT 2102 guide. Sidebar of entries on the left; the source pane on the right
+   stacks Files → typed notes or code boxes (code left, "what it does" + explanation right) → Remember for the test. */
 :root{
-  --paper:#f6f8fa; --sheet:#ffffff; --ink:#152033; --muted:#5a6678; --rule:#dfe4ea; --grid:#e8edf2;
-  --pen:#c8326f; --pen-soft:#fbe7ef; --teal:#13707a; --teal-soft:#e1f1f2;
-  --code-bg:#f2f5f8; --kw:#8a2b8f; --str:#1f7a3d; --num:#b4541a; --com:#7b8594;
+  --paper:#f4f7fb; --panel:#ffffff; --ink:#152033; --muted:#5a6677; --line:#d9e0ea;
+  --accent:#1f5fae; --accent-ink:#ffffff; --accent-soft:#e2ecf8; --mark:#f6dc5c; --mark-ink:#3a2f00; --mark-soft:#fdf6d3;
+  --ok:#257a5c; --ok-soft:#e3f2ec; --warn:#a5610f; --warn-soft:#fbefdf;
+  --code-bg:#eef2f8;
+  --t-lec:#55617a; --t-rex:#257a5c; --t-hw:#1f5fae;
+  --hl-kw:#8a2f9e; --hl-str:#2b7a2b; --hl-num:#b3541e; --hl-com:#7a8496; --hl-fn:#1f5fae;
   --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
   --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --paper:#10151d; --sheet:#161d27; --ink:#e7ecf2; --muted:#9aa6b6; --rule:#28323f; --grid:#1c2531;
-  --pen:#f06a9f; --pen-soft:#3a1d2a; --teal:#5cc4cc; --teal-soft:#14303a;
-  --code-bg:#0f141b; --kw:#d59be0; --str:#7fd39a; --num:#f0a36a; --com:#7d8898; color-scheme:dark }}
+  --paper:#0f141b; --panel:#161d27; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442;
+  --accent:#6ea8ff; --accent-ink:#0f141b; --accent-soft:#18263a; --mark:#e9cf4f; --mark-ink:#2b2300; --mark-soft:#2c2814;
+  --ok:#5fc39b; --ok-soft:#14291f; --warn:#e3a45a; --warn-soft:#2c2114;
+  --code-bg:#111821; --t-lec:#a7b3c6; --t-rex:#5fc39b; --t-hw:#6ea8ff;
+  --hl-kw:#d59be0; --hl-str:#7fd39a; --hl-num:#f0a36a; --hl-com:#7d8898; --hl-fn:#8ab8ff; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --paper:#10151d; --sheet:#161d27; --ink:#e7ecf2; --muted:#9aa6b6; --rule:#28323f; --grid:#1c2531;
-  --pen:#f06a9f; --pen-soft:#3a1d2a; --teal:#5cc4cc; --teal-soft:#14303a;
-  --code-bg:#0f141b; --kw:#d59be0; --str:#7fd39a; --num:#f0a36a; --com:#7d8898; color-scheme:dark }
+  --paper:#0f141b; --panel:#161d27; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442;
+  --accent:#6ea8ff; --accent-ink:#0f141b; --accent-soft:#18263a; --mark:#e9cf4f; --mark-ink:#2b2300; --mark-soft:#2c2814;
+  --ok:#5fc39b; --ok-soft:#14291f; --warn:#e3a45a; --warn-soft:#2c2114;
+  --code-bg:#111821; --t-lec:#a7b3c6; --t-rex:#5fc39b; --t-hw:#6ea8ff;
+  --hl-kw:#d59be0; --hl-str:#7fd39a; --hl-num:#f0a36a; --hl-com:#7d8898; --hl-fn:#8ab8ff; color-scheme:dark }
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{background:var(--paper);color:var(--ink);font:16px/1.6 var(--body);margin:0}
-a{color:var(--teal);text-underline-offset:3px}
-a:focus-visible,button:focus-visible{outline:2px solid var(--pen);outline-offset:2px;border-radius:4px}
-.wrap{max-width:1080px;margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+html,body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
+.app{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:100vh}
 
-/* top bar */
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
-.bar .wrap{display:flex;align-items:center;gap:20px;padding-block:10px;flex-wrap:wrap}
-.brand{font:700 15px/1 var(--display);letter-spacing:.02em;color:var(--ink);text-decoration:none;margin-right:auto}
-.brand span{color:var(--pen)}
-.bar nav{display:flex;gap:4px;flex-wrap:wrap}
-.bar nav a{font:500 14px/1 var(--body);color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:6px}
-.bar nav a:hover{color:var(--ink);background:var(--grid)}
+/* Sidebar */
+.side{background:var(--panel);border-right:1px solid var(--line);padding:20px 16px;display:flex;flex-direction:column;gap:14px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:inherit}
+.brand .code{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.04em}
+.brand h1{font-family:var(--display);font-size:22px;line-height:1.15;margin:0;font-weight:700;text-wrap:balance}
+.brand .sub{color:var(--muted);font-size:13px}
+.side-actions{display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.side-actions .btn{flex:1}
+.menu-btn{display:none}
+.search{width:100%;border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:8px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:3px 10px;font-size:13px;cursor:pointer;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+.list{display:flex;flex-direction:column;gap:2px;margin:0;padding:0;list-style:none}
+.group-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;padding:12px 8px 4px}
+.item{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:baseline;width:100%;text-align:left;border:0;background:transparent;border-radius:6px;padding:7px 8px;cursor:pointer;text-decoration:none;color:inherit}
+.item:hover{background:var(--code-bg)}
+.item[aria-current="true"]{background:var(--accent-soft)}
+.item .tag{font-family:var(--mono);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.item .t{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .meta{grid-column:2;font-size:12px;color:var(--muted)}
+.tc-lec{color:var(--t-lec)}.tc-rex{color:var(--t-rex)}.tc-hw{color:var(--t-hw)}
+.side-body{display:flex;flex-direction:column;gap:12px}
+.side-foot{margin-top:auto;font-size:12px;color:var(--muted)}
+.empty-line{color:var(--muted);font-size:14px;font-style:italic;padding:8px}
 
-/* hero */
-.hero{padding-block:48px 36px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:center}
-.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--pen);margin:0 0 14px}
-h1{font:700 clamp(36px,5.4vw,60px)/1.02 var(--display);letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance}
-.lede{color:var(--muted);max-width:52ch;margin:0 0 22px}
-.stats{display:flex;gap:28px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
-.stats li{display:flex;flex-direction:column}
-.stats b{font:600 28px/1 var(--display);font-variant-numeric:tabular-nums}
-.stats span{font-size:13px;color:var(--muted)}
-.plot{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:14px 14px 10px}
-.plot svg{display:block;width:100%;height:auto}
-.plot figcaption{font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:6px}
+/* Main */
+.main{padding-block:28px 72px;padding-inline:40px;min-width:0}
+.wrap{max-width:940px;display:flex;flex-direction:column;gap:28px}
+.head{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.02em;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.eyebrow .date{color:var(--muted);font-weight:400}
+.head h2{font-family:var(--display);font-size:34px;line-height:1.1;margin:0;font-weight:700;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:70ch}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-size:12px;border-radius:4px;padding:2px 8px;border:1px solid var(--line);color:var(--muted)}
+.badge.part{background:var(--mark);border-color:var(--mark);color:var(--mark-ink);font-weight:600}
+section.block{display:flex;flex-direction:column;gap:12px}
+.block-h{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:6px;flex-wrap:wrap}
+.block-h h3{font-family:var(--display);font-size:18px;margin:0;font-weight:600}
+.block-h .count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:8px;font-weight:400}
 
-/* sections */
-section{padding-block:40px;border-top:1px solid var(--rule)}
-.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-h2{font:700 30px/1.1 var(--display);letter-spacing:-.01em;margin:0}
-.sec-head p{margin:0;color:var(--muted);font-size:14px;max-width:60ch}
-h3{font:600 19px/1.25 var(--display);margin:0;text-wrap:balance}
+/* Files */
+.files{display:flex;flex-wrap:wrap;gap:10px}
+.file{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 12px 8px 8px;text-decoration:none;color:var(--ink);min-width:0}
+.file:hover{border-color:var(--accent)}
+.file img{width:44px;aspect-ratio:425/550;object-fit:cover;border:1px solid var(--line);border-radius:3px;background:#fff}
+.file .ic{font-family:var(--mono);font-size:11px;font-weight:600;border:1px solid currentColor;border-radius:3px;padding:1px 5px}
+.file .ic.pdf{color:#b3261e}.file .ic.r{color:var(--t-rex)}.file .ic.html{color:var(--accent)}
+.file .nm{font-weight:500;font-size:14px}
+.file .sz{font-size:12px;color:var(--muted)}
+.related{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.rel{font-size:13px;border-radius:999px;padding:3px 10px;text-decoration:none;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.rel:hover{border-color:var(--accent)}
+.rel b{font-family:var(--mono);font-size:12px;margin-right:4px}
+.toc{display:flex;flex-wrap:wrap;gap:6px}
+.toc a{font-size:13px;color:var(--muted);text-decoration:none;border-bottom:1px dashed var(--line)}
+.toc a:hover{color:var(--accent)}
 
-/* lectures ledger */
-.unit{margin:28px 0 10px;font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;gap:12px;align-items:center}
-.unit::after{content:"";flex:1;height:1px;background:var(--rule)}
-.ledger{list-style:none;margin:0;padding:0;display:grid;gap:0}
-.entry{display:grid;grid-template-columns:88px 92px minmax(0,1fr);gap:20px;padding-block:18px;border-bottom:1px dashed var(--rule);align-items:start}
-.date{font:600 15px/1.2 var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
-.date small{display:block;font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:3px}
-.thumb{display:block;width:92px;aspect-ratio:425/550;max-width:100%;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:#fff}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s}
-.thumb:hover img{transform:scale(1.04)}
-.entry-body{min-width:0;display:grid;gap:8px}
-.entry-body p{margin:0;color:var(--muted);font-size:15px}
-.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
-.chip{display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--body);padding:7px 10px;border-radius:999px;text-decoration:none;border:1px solid var(--rule);color:var(--ink);background:var(--sheet)}
-.chip:hover{border-color:var(--ink)}
-.chip.pdf{background:var(--pen-soft);border-color:transparent;color:var(--pen)}
-.chip.r{background:var(--teal-soft);border-color:transparent;color:var(--teal)}
-.chip .k{font:500 11px/1 var(--mono);letter-spacing:.04em;opacity:.8}
+/* Typed notes */
+.prose{max-width:74ch;font-size:15.5px}
+.prose h2{font-family:var(--display);font-size:22px;margin:30px 0 8px;scroll-margin-top:16px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-family:var(--display);font-size:17px;margin:20px 0 6px}
+.prose p{margin:0 0 12px}
+.prose ul,.prose ol{padding-left:22px;margin:0 0 12px}
+.prose li{margin:3px 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+.prose blockquote{margin:0 0 12px;padding:8px 14px;border-left:3px solid var(--line);color:var(--muted)}
+.prose table{border-collapse:collapse;font-size:14px;margin:0 0 14px;display:block;overflow-x:auto;max-width:100%}
+.prose th,.prose td{border:1px solid var(--line);padding:5px 10px;text-align:left;vertical-align:top}
+.prose th{background:var(--code-bg);font-weight:600}
+.box{border:1px solid var(--line);border-radius:8px;padding:12px 16px 2px;margin:0 0 16px;background:var(--panel)}
+.box-h{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.box-k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.box-t{font-family:var(--display);font-weight:600;font-size:16px}
+.box-def{border-color:var(--accent);background:var(--accent-soft)}.box-def .box-k{color:var(--accent)}
+.box-formula{border-color:var(--mark);background:var(--mark-soft)}.box-formula .box-k{color:var(--mark-ink)}
+:root[data-theme="dark"] .box-formula .box-k{color:var(--mark)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .box-formula .box-k{color:var(--mark)}}
+.box-example{border-color:var(--ok);background:var(--ok-soft)}.box-example .box-k{color:var(--ok)}
+.box-tip{border-color:var(--warn);background:var(--warn-soft)}.box-tip .box-k{color:var(--warn)}
+.box-r{background:var(--code-bg)}.box-r .box-k{color:var(--t-rex)}
+.box table{background:var(--panel)}
+math{font-size:1.06em}
+math[display="block"]{display:block;overflow-x:auto;overflow-y:hidden;padding:4px 0;margin:6px 0 12px}
+.katex{white-space:normal}
 
-/* homework */
-.hw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.hw{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px;display:grid;grid-template-columns:76px minmax(0,1fr);gap:18px;align-items:start}
-.hw .thumb{width:76px}
-.hw ol{margin:8px 0 12px;padding-left:20px;font-size:14px;color:var(--muted)}
-.hw ol li{margin:2px 0}
-.hw .meta{font:400 12px/1.4 var(--mono);color:var(--muted)}
-.data-tag{font:500 12px/1 var(--mono);background:var(--grid);color:var(--ink);padding:3px 6px;border-radius:4px}
-
-/* code */
-.code-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;align-items:start}
-.code-list{list-style:none;margin:0;padding:0;display:grid;gap:4px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px)}
-.code-list button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;padding:10px 12px;border-radius:8px;display:grid;gap:2px;border:1px solid transparent}
-.code-list button:hover{background:var(--grid)}
-.code-list button[aria-selected="true"]{background:var(--sheet);border-color:var(--rule)}
-.code-list button[aria-selected="true"] .t{color:var(--teal)}
-.code-list .t{font:600 15px/1.3 var(--display)}
-.code-list .s{font:400 12px/1.3 var(--mono);color:var(--muted)}
-.viewer{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;min-width:0;overflow:hidden}
-.viewer-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid var(--rule)}
-.viewer-head h3{font-size:20px}
-.viewer-head p{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:62ch}
-.btns{display:flex;gap:8px;flex-wrap:wrap}
-button.chip{cursor:pointer}
-.note{font-size:13px;color:var(--muted);padding:10px 18px;background:var(--grid);border-bottom:1px solid var(--rule)}
-.note code{font-family:var(--mono);font-size:12px}
-pre.code{margin:0;max-height:560px;overflow:auto;background:var(--code-bg);padding:16px 18px;font:13px/1.6 var(--mono);color:var(--ink);tab-size:2}
-pre.code code{font:inherit;background:none;padding:0}
-.hljs-keyword,.hljs-built_in,.hljs-literal{color:var(--kw)}
-.hljs-string{color:var(--str)}
-.hljs-number{color:var(--num)}
-.hljs-comment{color:var(--com);font-style:italic}
+/* Code chunks */
+.sec-h{font-family:var(--display);font-size:20px;margin:6px 0 0;font-weight:600}
+.chunks{display:flex;flex-direction:column;gap:14px}
+.chunk{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden;scroll-margin-top:16px}
+.chunk.key{border-color:var(--mark);box-shadow:inset 3px 0 0 var(--mark)}
+.chunk.solo{grid-template-columns:minmax(0,1fr)}
+.chunk-code{min-width:0;display:flex;flex-direction:column}
+.chunk-bar{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px}
+.chunk-bar .num{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.chunk-bar .lbl{font-family:var(--mono);font-weight:600;flex:1;min-width:0}
+.star{font-size:11px;font-weight:600;background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:1px 6px}
+.copy{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 4px}
+.copy:hover{color:var(--accent)}
+pre{margin:0;overflow-x:auto;background:var(--code-bg);padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.6;flex:1}
+pre code{font-family:inherit;background:none}
+.plots{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--code-bg);border-top:1px dashed var(--line)}
+.plots a{display:block;flex:1 1 240px;max-width:380px}
+.plots img{display:block;width:100%;border-radius:4px;background:#fff;border:1px solid var(--line)}
+.chunk-side{border-left:1px dashed var(--line);min-width:0;display:flex;flex-direction:column;background:var(--panel)}
+.chunk.solo .chunk-side{border-left:0}
+.chunk-q{padding:10px 14px;font-size:14px;background:var(--accent-soft);border-bottom:1px dashed var(--line);overflow-wrap:anywhere}
+.chunk-note{padding:10px 14px 6px;font-size:14px}
+.chunk-note ul{margin:0;padding-left:18px}
+.chunk-note li{margin:0 0 6px}
+.label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:4px}
+.chunk-q .label{color:var(--accent)}
+.chunk-q code,.chunk-note code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:0 4px;border-radius:3px}
+.chunk.flash{outline:3px solid var(--mark);outline-offset:2px}
+.hljs-keyword,.hljs-built_in,.hljs-literal{color:var(--hl-kw)}
+.hljs-string{color:var(--hl-str)}
+.hljs-number{color:var(--hl-num)}
+.hljs-comment{color:var(--hl-com);font-style:italic}
+.hljs-title,.hljs-title.function_{color:var(--hl-fn)}
 .hljs-operator,.hljs-punctuation{color:var(--ink)}
 
-footer{padding-block:32px 48px;border-top:1px solid var(--rule);color:var(--muted);font-size:13px}
+/* Takeaways */
+.takeaways{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;counter-reset:tk}
+.takeaways li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;counter-increment:tk}
+.takeaways li::before{content:counter(tk);font-family:var(--mono);font-size:12px;font-weight:600;color:var(--mark-ink);background:var(--mark);border-radius:4px;height:22px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.takeaways code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:0 4px;border-radius:3px}
 
-@media (max-width:820px){
-  .hero{grid-template-columns:1fr;padding-block:32px 24px}
-  .hw-grid{grid-template-columns:1fr}
-  .code-layout{grid-template-columns:1fr}
-  .code-list{position:static;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+/* Guide & formulas */
+.guide-stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column}
+.stat b{font-family:var(--display);font-size:28px;font-variant-numeric:tabular-nums;line-height:1}
+.stat span{font-size:12px;color:var(--muted)}
+.g-entry{display:flex;flex-direction:column;gap:10px;padding-top:18px;border-top:1px solid var(--line)}
+.g-entry h4{margin:0;font-family:var(--display);font-size:19px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.g-entry h4 a{color:inherit;text-decoration:none}
+.g-entry h4 a:hover{color:var(--accent)}
+.g-entry h4 .tag{font-family:var(--mono);font-size:13px}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fgrid .box{margin:0}
+.fgrid .box .src{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto}
+
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .side.collapsed .collapsible{display:none}
+  .menu-btn{display:inline-flex}
+  .main{padding-inline:16px}
+  .head h2{font-size:27px}
+  .chunk{grid-template-columns:minmax(0,1fr)}
+  .chunk-side{border-left:0;border-top:1px dashed var(--line)}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
 }
-@media (max-width:560px){
-  .entry{grid-template-columns:64px minmax(0,1fr);gap:14px}
-  .entry .date{grid-column:1/-1}
-  .thumb{width:64px}
-  .hw{grid-template-columns:1fr}
-  .hw .thumb{display:none}
-  .bar nav a{padding:6px 8px}
-  .stats{gap:18px}
-  .stats b{font-size:24px}
-}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-
-<header class="bar">
-  <div class="wrap">
-    <a class="brand" href="#top">STAT 2103 <span>·</span> Notebook</a>
-    <nav aria-label="Sections">
-      <a href="#lectures">Lectures</a>
-      <a href="#homework">Homework</a>
-      <a href="#rcode">R code</a>
-    </nav>
-  </div>
-</header>
-
-<main id="top">
-  <div class="wrap hero">
-    <div>
-      <p class="eyebrow">Columbia · Fall 2026 · STAT UN2103</p>
+<div class="app">
+  <aside class="side" id="side">
+    <a class="brand" href="#guide">
+      <span class="code">STAT 2103 · Fall 2026</span>
       <h1>Applied Linear Regression</h1>
-      <p class="lede">Lecture notes, problem sets and R examples for the course, collected in one place and in the order they were taught. From probability review through inference on the slope.</p>
-      <ul class="stats">
-        <li><b id="n-lec">9</b><span>lectures</span></li>
-        <li><b id="n-pages">104</b><span>pages of notes</span></li>
-        <li><b>4</b><span>homeworks</span></li>
-        <li><b>6</b><span>R examples</span></li>
-      </ul>
+      <span class="sub">Typed notes, explained R code and homework guides</span>
+    </a>
+    <div class="side-actions">
+      <a class="btn" id="btnGuide" href="#guide" aria-pressed="false">Study guide</a>
+      <a class="btn" id="btnFormulas" href="#formulas" aria-pressed="false">Formula sheet</a>
+      <button class="btn menu-btn" id="btnMenu" type="button" aria-expanded="false">List</button>
     </div>
-    <figure class="plot" style="margin:0">
-      <svg id="hero-plot" viewBox="0 0 420 270" role="img" aria-label="Scatter plot of simulated points with a fitted least squares line and residuals drawn as vertical segments"></svg>
-      <figcaption>ŷ = 158.2 + 16.9x · vocabulary size vs. infant-directed words (simulated around the fit in the Oct 12 example)</figcaption>
-    </figure>
-  </div>
-
-  <section id="lectures">
-    <div class="wrap">
-      <div class="sec-head">
-        <h2>Lectures</h2>
-        <p>Handwritten notes, scanned per class. Click a page to open the full PDF. Related R examples and homework are linked beside each date.</p>
-      </div>
-      <div id="ledger"></div>
+    <div class="collapsible side-body">
+      <input class="search" id="search" type="search" placeholder="Search notes, code, explanations…" aria-label="Search">
+      <div class="chips" id="typeChips" role="group" aria-label="Filter by type"></div>
+      <div class="chips" id="partChips" role="group" aria-label="Filter by part"></div>
+      <ul class="list" id="list"></ul>
     </div>
-  </section>
+    <div class="side-foot collapsible">Source files: edit <code>content/</code>, then run <code>build/build.py</code>.</div>
+  </aside>
+  <main class="main" id="main"><div class="wrap"><p class="lede">Loading…</p></div></main>
+</div>
 
-  <section id="homework">
-    <div class="wrap">
-      <div class="sec-head">
-        <h2>Homework</h2>
-        <p>Problem sets with the topics each question covers. Data files named in a problem are listed at the bottom of its card.</p>
-      </div>
-      <div class="hw-grid" id="hw-grid"></div>
-    </div>
-  </section>
-
-  <section id="rcode">
-    <div class="wrap">
-      <div class="sec-head">
-        <h2>R code</h2>
-        <p>Each class example as a runnable <code>.R</code> script, with the explanation kept as comments. Open the notebook to see the original output and plots.</p>
-      </div>
-      <div class="code-layout">
-        <ul class="code-list" id="code-list" role="tablist" aria-label="R examples"></ul>
-        <div class="viewer" id="viewer" role="tabpanel">
-          <div class="viewer-head">
-            <div style="min-width:0">
-              <h3 id="v-title">Loading…</h3>
-              <p id="v-intro"></p>
-            </div>
-            <div class="btns">
-              <button class="chip r" id="v-copy" type="button">Copy code</button>
-              <a class="chip" id="v-raw" href="#" target="_blank" rel="noopener">Open .R</a>
-              <a class="chip" id="v-nb" href="#" target="_blank" rel="noopener">Rendered notebook</a>
-            </div>
-          </div>
-          <div class="note" id="v-note" hidden></div>
-          <pre class="code"><code id="v-code" class="language-r"></code></pre>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="wrap">Emmy Davis · STAT UN2103 Applied Linear Regression, Columbia University, Fall 2026. Homework problems and R examples are course materials from the instructor; notes are handwritten class notes.</div>
-</footer>
-
+<script src="data/site.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>
-const EX = {
-  "binom-normal":{title:"Binomial & Normal distributions",intro:"Left-handedness in samples of 10: dbinom, pbinom, rbinom, then the Normal with dnorm, pnorm and qnorm.",chunks:35},
-  "lln-and-clt":{title:"Law of Large Numbers & CLT",intro:"Blood pressure ~ Normal(120, 10): how sample averages settle down and become Normal as n grows.",chunks:26},
-  "fitting-lines":{title:"Fitting lines",intro:"Economic voting: income growth vs. incumbent party vote share, and choosing the line that minimizes squared vertical distance.",chunks:12},
-  "simulating-regression":{title:"Simulating regression",intro:"Sample 50 students' SAT and GPA, fit lm(), and see how the estimated line changes from sample to sample.",chunks:19,data:"academics.csv"},
-  "simulating-regression-2":{title:"Simulating regression, part 2",intro:"Generate data from a known population line with random error, then compare fits when σ = 10 versus σ = 50.",chunks:16},
-  "slr-inference":{title:"Inference for SLR",intro:"Infant vocabulary vs. words spoken: confidence intervals and t tests for the slope, by hand and with confint() and summary().",chunks:19,data:"language.Rdata"}
-};
-const LEC = [
-  {unit:"Part I · Probability and inference review"},
-  {d:"Sep 14",dow:"Mon",slug:"2026-09-14-probability-fundamentals",t:"Probability fundamentals",p:13,desc:"Random variables, expectation, variance, covariance, joint and conditional distributions.",ex:[],hw:[1]},
-  {d:"Sep 16",dow:"Wed",slug:"2026-09-16-binomial-and-normal",t:"Binomial and Normal distributions",p:14,desc:"Counting successes in n trials; the Normal density, standardizing, and percentiles.",ex:["binom-normal"],hw:[1,2]},
-  {d:"Sep 21",dow:"Mon",slug:"2026-09-21-sampling-distributions",t:"Sampling distributions & limit theorems",p:10,desc:"The sample mean as a random variable; Law of Large Numbers and Central Limit Theorem.",ex:["lln-and-clt"],hw:[2]},
-  {d:"Sep 23",dow:"Wed",slug:"2026-09-23-confidence-intervals",t:"Confidence intervals",p:12,desc:"Intervals for a mean and a proportion; when to use z versus t.",ex:[],hw:[2,3]},
-  {d:"Sep 28",dow:"Mon",slug:"2026-09-28-hypothesis-tests",t:"Hypothesis tests",p:12,desc:"Null and alternative hypotheses, test statistics, p-values and rejection thresholds.",ex:[],hw:[3]},
-  {unit:"Part II · Simple linear regression"},
-  {d:"Sep 30",dow:"Wed",slug:"2026-09-30-linear-regression-intro",t:"Introduction to linear regression",p:10,desc:"Predictor and response, and defining the line that is “closest” to the points: least squares.",ex:["fitting-lines"],hw:[3,4]},
-  {d:"Oct 5",dow:"Mon",slug:"2026-10-05-interpreting-regression",t:"Interpreting linear regression",p:11,desc:"Reading the slope and intercept in context, their units, and predicting at x̄.",ex:["simulating-regression"],hw:[4]},
-  {d:"Oct 7",dow:"Wed",slug:"2026-10-07-regression-assumptions",t:"Linear regression assumptions",p:10,desc:"The population model Y = β₀ + β₁X + ε, and what the error variance does to estimates.",ex:["simulating-regression-2"],hw:[4]},
-  {d:"Oct 12",dow:"Mon",slug:"2026-10-12-slr-inference",t:"Inference for simple linear regression",p:12,desc:"Estimating σ², the standard error of the slope, t intervals and tests with n − 2 df.",ex:["slr-inference"],hw:[]}
-];
-const HW = [
-  {n:1,p:2,topics:["Expectation, variance and covariance from a PMF","Standardizing: E and var of (X − μ)/σ","Joint and conditional distributions (USB tries)","Binomial reasoning: which route to take","Correlation of GRE math and verbal; histogram of differences"],data:["scores.csv"]},
-  {n:2,p:2,topics:["GRE verbal scores vs. a Normal(151, 8²) overlay; simulation","Binomial probabilities: homeschooled children in Alaska","Normal percentiles: daily and weekly birdseed","Sea turtle sex ratio: expected count, tail probability, 95% CI"],data:["scores.csv"]},
-  {n:3,p:2,topics:["90% t interval for triathlete heart rate","Distribution of a standardized Normal","One-sided test for a proportion: bottle breakage","Two-sided z test: uranium concentration at α = 0.05 and 0.01","First regression: car weight vs. 0–60 time"],data:["cars.csv"]},
-  {n:4,p:3,topics:["Least squares fit: hurricane pressure vs. wind speed","Interpretation, units, prediction and extrapolation","Prediction at x̄, effect of one sₓ, residual for Harvey","Which sample gives a more precise slope? (three comparisons)"],data:["hurricanes.csv"]}
-];
+const S = window.SITE || {notes:[],examples:[],homework:[],formulas:[]};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const strip = h => String(h || '').replace(/<annotation[^>]*>.*?<\/annotation>/g,'').replace(/<[^>]+>/g,' ');
+const TYPES = {lec:{label:'Lecture notes', short:'Notes'}, rex:{label:'R examples', short:'R code'}, hw:{label:'Homework', short:'Homework'}};
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtDate = d => { const [y,m,dd] = d.split('-'); return `${MONTHS[+m-1]} ${+dd}`; };
 
-const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-
-// Lectures
-(function(){
-  let html = "", list = null, pages = 0;
-  for (const L of LEC){
-    if (L.unit){ if (list) html += "</ol>"; html += `<div class="unit">${esc(L.unit)}</div><ol class="ledger">`; list = true; continue; }
-    pages += L.p;
-    const ex = L.ex.map(k => `<a class="chip r" href="#rcode" data-ex="${k}"><span class="k">R</span>${esc(EX[k].title)}</a>`).join("");
-    const hw = L.hw.map(n => `<a class="chip" href="#hw${n}"><span class="k">HW</span>${n}</a>`).join("");
-    html += `<li class="entry">
-      <div class="date">${L.d}<small>${L.dow} · ${L.p} pp.</small></div>
-      <a class="thumb" href="notes/${L.slug}.pdf" target="_blank" rel="noopener" aria-label="Open notes for ${esc(L.t)}"><img src="thumbs/${L.slug}.jpg" alt="" loading="lazy"></a>
-      <div class="entry-body">
-        <h3>${esc(L.t)}</h3>
-        <p>${esc(L.desc)}</p>
-        <div class="links"><a class="chip pdf" href="notes/${L.slug}.pdf" target="_blank" rel="noopener"><span class="k">PDF</span>Notes</a>${ex}${hw}</div>
-      </div></li>`;
-  }
-  html += "</ol>";
-  document.getElementById("ledger").innerHTML = html;
-  document.getElementById("n-pages").textContent = pages;
-})();
-
-// Homework
-document.getElementById("hw-grid").innerHTML = HW.map(h => `
-  <article class="hw" id="hw${h.n}">
-    <a class="thumb" href="assignments/hw${h.n}.pdf" target="_blank" rel="noopener" aria-label="Open Homework ${h.n}"><img src="thumbs/hw${h.n}.jpg" alt="" loading="lazy"></a>
-    <div style="min-width:0">
-      <h3>Homework ${h.n}</h3>
-      <ol>${h.topics.map(t => `<li>${esc(t)}</li>`).join("")}</ol>
-      <div class="links">
-        <a class="chip pdf" href="assignments/hw${h.n}.pdf" target="_blank" rel="noopener"><span class="k">PDF</span>${h.p} pages</a>
-        ${h.data.map(d => `<span class="data-tag">${d}</span>`).join("")}
-      </div>
-    </div>
-  </article>`).join("");
-
-// R code viewer
-const keys = Object.keys(EX);
-const listEl = document.getElementById("code-list");
-listEl.innerHTML = keys.map(k => `<li><button type="button" role="tab" id="tab-${k}" data-k="${k}" aria-selected="false"><span class="t">${esc(EX[k].title)}</span><span class="s">${k}.R · ${EX[k].chunks} chunks</span></button></li>`).join("");
-let current = null;
-async function show(k){
-  if (!EX[k]) return;
-  current = k;
-  listEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", b.dataset.k === k));
-  const e = EX[k];
-  document.getElementById("v-title").textContent = e.title;
-  document.getElementById("v-intro").textContent = e.intro;
-  document.getElementById("v-raw").href = `code/${k}.R`;
-  document.getElementById("v-nb").href = `examples/${k}.html`;
-  const note = document.getElementById("v-note");
-  if (e.data){ note.hidden = false; note.innerHTML = `Uses <code>${e.data}</code>, which isn't in this repo. Put it in a <code>data/</code> folder and change the file path in the script to <code>data/${e.data}</code>.`; }
-  else note.hidden = true;
-  const codeEl = document.getElementById("v-code");
-  codeEl.textContent = "Loading…";
-  try{
-    const r = await fetch(`code/${k}.R`);
-    if (!r.ok) throw new Error(r.status);
-    const txt = await r.text();
-    if (current !== k) return;
-    codeEl.textContent = txt;
-    codeEl.removeAttribute("data-highlighted");
-    if (window.hljs) hljs.highlightElement(codeEl);
-  }catch(err){
-    codeEl.textContent = `Couldn't load code/${k}.R. Open it directly with the "Open .R" button.`;
-  }
-}
-listEl.addEventListener("click", ev => { const b = ev.target.closest("button[data-k]"); if (b) show(b.dataset.k); });
-document.addEventListener("click", ev => { const a = ev.target.closest("a[data-ex]"); if (a) show(a.dataset.ex); });
-document.getElementById("v-copy").addEventListener("click", async ev => {
-  const btn = ev.currentTarget, text = document.getElementById("v-code").textContent;
-  try{ await navigator.clipboard.writeText(text); btn.textContent = "Copied"; }
-  catch(_){ const sel = getSelection(), rg = document.createRange(); rg.selectNodeContents(document.getElementById("v-code")); sel.removeAllRanges(); sel.addRange(rg); btn.textContent = "Selected — press Ctrl/⌘+C"; }
-  setTimeout(() => btn.textContent = "Copy code", 1800);
+// index everything by id
+const BY = {};
+S.notes.forEach(e => BY[e.id] = e);
+S.examples.forEach(e => BY[e.id] = e);
+S.homework.forEach(e => BY[e.id] = e);
+const partOf = e => e.type === 'lec' ? e.part : e.type === 'rex' ? (BY[e.lecture]?.part || '') :
+  ((e.lectures || []).map(l => BY[l]?.part).includes('Part II') ? 'Part II' : 'Part I');
+const ALL = [...S.notes, ...S.examples, ...S.homework];
+ALL.forEach(e => {
+  e._part = partOf(e);
+  const boxes = (e.sections || []).flatMap(s => s.boxes);
+  e._hay = [e.id, e.title, (e.topics||[]).join(' '), strip(e.summary), strip(e.html), (e.takeaways||[]).map(strip).join(' '),
+    ...boxes.map(b => strip(b.title) + ' ' + strip(b.what) + ' ' + strip(b.question) + ' ' + (b.code||'') + ' ' + (b.explain||[]).map(strip).join(' '))].join(' ').toLowerCase();
 });
-show("slr-inference");
+const hwFor = lecId => S.homework.filter(h => (h.lectures||[]).includes(lecId));
+const exFor = lecId => S.examples.filter(x => x.lecture === lecId || (BY[lecId]?.examples||[]).includes(x.id));
 
-// Hero plot: points simulated around the Oct 12 fitted line, residuals drawn in pen color
-(function(){
-  const svg = document.getElementById("hero-plot"), NS = "http://www.w3.org/2000/svg";
-  const W=420,H=270,m={l:44,r:12,t:12,b:34};
-  const x0=0,x1=10,y0=100,y1=400;
-  const sx=x=>m.l+(x-x0)/(x1-x0)*(W-m.l-m.r), sy=y=>H-m.b-(y-y0)/(y1-y0)*(H-m.t-m.b);
-  let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
-  const norm=()=>Math.sqrt(-2*Math.log(rnd()))*Math.cos(2*Math.PI*rnd());
-  const f=x=>158.17+16.88*x;
-  const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
-  for(let y=100;y<=400;y+=50){el("line",{x1:m.l,x2:W-m.r,y1:sy(y),y2:sy(y),stroke:"var(--grid)","stroke-width":1});el("text",{x:m.l-8,y:sy(y)+4,"text-anchor":"end","font-size":11,fill:"var(--muted)","font-family":"JetBrains Mono, monospace"}).textContent=y;}
-  for(let x=0;x<=10;x+=2){el("line",{y1:m.t,y2:H-m.b,x1:sx(x),x2:sx(x),stroke:"var(--grid)","stroke-width":1});el("text",{x:sx(x),y:H-m.b+16,"text-anchor":"middle","font-size":11,fill:"var(--muted)","font-family":"JetBrains Mono, monospace"}).textContent=x;}
-  el("text",{x:(m.l+W-m.r)/2,y:H-4,"text-anchor":"middle","font-size":11,fill:"var(--muted)","font-family":"IBM Plex Sans, sans-serif"}).textContent="words spoken daily (1000s)";
-  const pts=[];for(let i=0;i<30;i++){const x=1+rnd()*8.5;pts.push([x,f(x)+norm()*44.8]);}
-  for(const [x,y] of pts) el("line",{x1:sx(x),x2:sx(x),y1:sy(y),y2:sy(f(x)),stroke:"var(--pen)","stroke-width":1.2,opacity:.55});
-  el("line",{x1:sx(0),x2:sx(10),y1:sy(f(0)),y2:sy(f(10)),stroke:"var(--teal)","stroke-width":2.5,"stroke-linecap":"round"});
-  for(const [x,y] of pts) el("circle",{cx:sx(x),cy:sy(y),r:3.4,fill:"var(--sheet)",stroke:"var(--ink)","stroke-width":1.4});
-})();
+let filterType = 'all', filterPart = 'all', query = '';
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function recall(k){try{return localStorage.getItem(k)}catch(e){return null}}
+
+// ---------- sidebar
+function renderChips(){
+  $('#typeChips').innerHTML = [['all','All'],['lec','Notes'],['rex','R code'],['hw','Homework']]
+    .map(([v,l]) => `<button class="chip" type="button" data-type="${v}" aria-pressed="${filterType===v}">${l}</button>`).join('');
+  $('#partChips').innerHTML = [['all','Any part'],['Part I','Part I · Review'],['Part II','Part II · Regression']]
+    .map(([v,l]) => `<button class="chip" type="button" data-part="${v}" aria-pressed="${filterPart===v}">${l}</button>`).join('');
+}
+function matches(e){
+  if (filterType !== 'all' && e.type !== filterType) return false;
+  if (filterPart !== 'all' && e._part !== filterPart) return false;
+  if (query) return query.split(/\s+/).every(w => e._hay.includes(w));
+  return true;
+}
+function metaOf(e){
+  if (e.type === 'lec') return `${fmtDate(e.date)} · ${e.toc.length} sections`;
+  const n = e.sections.reduce((a,s) => a + s.boxes.length, 0);
+  if (e.type === 'rex') return `${n} boxes · goes with ${e.lecture}`;
+  return `${n} problems`;
+}
+function renderList(){
+  const cur = location.hash.slice(1).split('-b')[0];
+  const items = ALL.filter(matches);
+  if (!items.length){ $('#list').innerHTML = '<li class="empty-line">Nothing matches.</li>'; return; }
+  let html = '', last = '';
+  for (const e of items){
+    if (e.type !== last){ html += `<li class="group-h">${TYPES[e.type].label}</li>`; last = e.type; }
+    html += `<li><a class="item" href="#${e.id}" aria-current="${cur===e.id}">
+      <span class="tag tc-${e.type}">${e.id}</span><span class="t">${esc(e.title)}</span>
+      <span class="meta">${esc(metaOf(e))}</span></a></li>`;
+  }
+  $('#list').innerHTML = html;
+}
+function renderSide(){
+  renderChips(); renderList();
+  const h = location.hash.slice(1) || 'guide';
+  $('#btnGuide').setAttribute('aria-pressed', h === 'guide');
+  $('#btnFormulas').setAttribute('aria-pressed', h === 'formulas');
+}
+
+// ---------- pieces
+const fileCard = (href, ic, name, sz, thumb) =>
+  `<a class="file" href="${esc(href)}" target="_blank" rel="noopener">${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy">` : ''}
+   <span><span class="ic ${ic}">${ic.toUpperCase()}</span></span><span style="display:flex;flex-direction:column;min-width:0"><span class="nm">${esc(name)}</span>${sz ? `<span class="sz">${esc(sz)}</span>` : ''}</span></a>`;
+const relLink = e => `<a class="rel" href="#${e.id}"><b class="tc-${e.type}">${e.id}</b>${esc(e.title)}</a>`;
+const takeawaysHTML = tk => tk && tk.length ? `<section class="block"><div class="block-h"><h3>Remember for the test<span class="count">${tk.length}</span></h3></div><ol class="takeaways">${tk.map(t => `<li><span>${t}</span></li>`).join('')}</ol></section>` : '';
+function headHTML(e, kind, extra){
+  return `<header class="head">
+    <div class="eyebrow"><span class="tc-${e.type}">${e.id} · ${kind}</span>${extra ? `<span class="date">${extra}</span>` : ''}</div>
+    <h2>${esc(e.title)}</h2>
+    <p class="lede">${e.summary || ''}</p>
+    <div class="badges">${e._part ? `<span class="badge part">${esc(e._part)}</span>` : ''}${(e.topics||[]).map(t => `<span class="badge">${esc(t)}</span>`).join('')}</div>
+  </header>`;
+}
+function chunkHTML(e, b, isHW){
+  const anchor = `${e.id}-b${b.n}`;
+  const hasCode = !!(b.code && b.code.trim());
+  const side = `<div class="chunk-side">
+      <div class="chunk-q"><span class="label">${isHW ? 'Question' : 'What this does'}</span>${isHW ? b.question : b.what}</div>
+      <div class="chunk-note"><span class="label">${isHW ? 'How to approach it' : 'Explanation'}</span><ul>${(b.explain||[]).map(x => `<li>${x}</li>`).join('')}</ul></div>
+    </div>`;
+  if (!hasCode) return `<article class="chunk solo${b.key ? ' key' : ''}" id="${anchor}">
+      <div class="chunk-bar"><span class="num">${String(b.n).padStart(2,'0')}</span><span class="lbl">${b.title}</span>${b.key ? '<span class="star">Exam</span>' : ''}</div>${side}</article>`;
+  return `<article class="chunk${b.key ? ' key' : ''}" id="${anchor}">
+    <div class="chunk-code">
+      <div class="chunk-bar"><span class="num">${String(b.n).padStart(2,'0')}</span><span class="lbl">${b.title}</span>${b.key ? '<span class="star">Exam</span>' : ''}<button class="copy" type="button" data-copy="${anchor}">Copy</button></div>
+      <pre><code class="language-r">${esc(b.code)}</code></pre>
+      ${b.imgs && b.imgs.length ? `<div class="plots">${b.imgs.map(src => `<a href="${esc(src)}" target="_blank" rel="noopener"><img src="${esc(src)}" alt="Plot produced by this code" loading="lazy"></a>`).join('')}</div>` : ''}
+    </div>${side}</article>`;
+}
+function sectionsHTML(e, isHW){
+  const n = e.sections.reduce((a,s) => a + s.boxes.length, 0);
+  return `<section class="block"><div class="block-h"><h3>${isHW ? 'Problems' : 'Code'}<span class="count">${n} ${isHW ? 'problems' : 'boxes'}</span></h3>
+    <span class="related">Yellow edge = <span class="star">Exam</span> likely to matter on a test</span></div>
+    ${e.sections.map(s => `${s.title ? `<h4 class="sec-h">${esc(s.title)}</h4>` : ''}<div class="chunks">${s.boxes.map(b => chunkHTML(e, b, isHW)).join('')}</div>`).join('')}
+  </section>`;
+}
+
+// ---------- views
+function lectureHTML(e){
+  const pages = {L01:13,L02:14,L03:10,L04:12,L05:12,L06:10,L07:11,L08:10,L09:12}[e.id];
+  const ex = exFor(e.id), hw = hwFor(e.id);
+  return headHTML(e, 'Lecture notes', fmtDate(e.date)) +
+  `<section class="block"><div class="block-h"><h3>Files</h3></div>
+     <div class="files">${fileCard(e.pdf, 'pdf', 'Handwritten notes', pages ? pages + ' pages' : '', e.thumb)}</div>
+     ${ex.length || hw.length ? `<div class="related">Goes with ${[...ex, ...hw].map(relLink).join('')}</div>` : ''}
+   </section>
+   <section class="block"><div class="block-h"><h3>Typed notes<span class="count">${e.toc.length} sections</span></h3></div>
+     <nav class="toc" aria-label="Sections">${e.toc.map(t => `<a href="#${t.id}" data-scroll="${t.id}">${t.t}</a>`).join('')}</nav>
+     <div class="prose">${e.html}</div>
+   </section>` + takeawaysHTML(e.takeaways);
+}
+function exampleHTML(e){
+  const lec = BY[e.lecture];
+  return headHTML(e, 'R example', lec ? `goes with ${lec.id} · ${fmtDate(lec.date)}` : '') +
+  `<section class="block"><div class="block-h"><h3>Files</h3></div>
+     <div class="files">${fileCard(e.notebook, 'html', 'Original notebook', 'code, output and plots')}${fileCard(e.script, 'r', e.key + '.R', 'runnable script')}</div>
+     ${lec ? `<div class="related">Notes: ${relLink(lec)}</div>` : ''}
+   </section>` + sectionsHTML(e, false) + takeawaysHTML(e.takeaways);
+}
+function homeworkHTML(e){
+  const lecs = (e.lectures||[]).map(l => BY[l]).filter(Boolean);
+  const exs = [...new Set(lecs.flatMap(l => exFor(l.id)))];
+  return headHTML(e, 'Homework') +
+  `<section class="block"><div class="block-h"><h3>Files</h3></div>
+     <div class="files">${fileCard(e.pdf, 'pdf', `Homework ${e.num}`, 'assignment', e.thumb)}</div>
+     <div class="related">Data: ${(e.data||[]).map(d => `<code>${esc(d)}</code>`).join(' ') || 'none'} (not included in this repo)</div>
+     <div class="related">Use ${[...lecs, ...exs].map(relLink).join('')}</div>
+   </section>` + sectionsHTML(e, true);
+}
+function guideHTML(){
+  const nBoxes = S.examples.reduce((a,e) => a + e.sections.reduce((b,s) => b + s.boxes.length, 0), 0);
+  const nTk = ALL.reduce((a,e) => a + (e.takeaways||[]).length, 0);
+  return `<header class="head"><div class="eyebrow"><span class="tc-lec">Columbia · STAT UN2103 · Fall 2026</span></div>
+    <h2>Study guide</h2>
+    <p class="lede">Every "Remember for the test" point from the typed notes and R examples, in course order. Click a title to open the full entry.</p>
+    <div class="guide-stats">
+      <div class="stat"><b>${S.notes.length}</b><span>lectures typed up</span></div>
+      <div class="stat"><b>${nBoxes}</b><span>explained R boxes</span></div>
+      <div class="stat"><b>${S.homework.length}</b><span>homework guides</span></div>
+      <div class="stat"><b>${S.formulas.length}</b><span>formulas</span></div>
+      <div class="stat"><b>${nTk}</b><span>key points</span></div>
+    </div></header>` +
+  S.notes.map(l => {
+    const ex = exFor(l.id);
+    return `<div class="g-entry"><h4><a href="#${l.id}"><span class="tag tc-lec">${l.id}</span> ${esc(l.title)}</a><span class="badge">${fmtDate(l.date)}</span></h4>
+      <ol class="takeaways">${l.takeaways.map(t => `<li><span>${t}</span></li>`).join('')}</ol>
+      ${ex.map(x => `<h4 style="font-size:16px"><a href="#${x.id}"><span class="tag tc-rex">${x.id}</span> ${esc(x.title)}</a></h4><ol class="takeaways">${x.takeaways.map(t => `<li><span>${t}</span></li>`).join('')}</ol>`).join('')}
+    </div>`;
+  }).join('');
+}
+function formulasHTML(){
+  return `<header class="head"><div class="eyebrow"><span class="tc-lec">All lectures</span></div><h2>Formula sheet</h2>
+    <p class="lede">Every formula box from the typed notes, grouped by lecture.</p></header>` +
+  S.notes.map(l => {
+    const fs = S.formulas.filter(f => f.lec === l.id);
+    if (!fs.length) return '';
+    return `<section class="block"><div class="block-h"><h3><a href="#${l.id}" style="color:inherit;text-decoration:none">${l.id} · ${esc(l.title)}</a><span class="count">${fs.length}</span></h3></div>
+      <div class="fgrid prose" style="max-width:none">${fs.map(f => `<div class="box box-formula"><div class="box-h"><span class="box-t">${f.title || 'Formula'}</span></div>${f.html}</div>`).join('')}</div></section>`;
+  }).join('');
+}
+
+function render(){
+  const raw = location.hash.slice(1);
+  let id = raw || 'guide', target = null;
+  if (/^(L|R|HW)\d+-b\d+$/.test(raw)){ id = raw.split('-b')[0]; target = raw; }
+  else if (/^L\d+-/.test(raw)){ id = raw.slice(0,3); target = raw; }
+  let html;
+  const e = BY[id];
+  if (id === 'formulas') html = formulasHTML();
+  else if (e && e.type === 'lec') html = lectureHTML(e);
+  else if (e && e.type === 'rex') html = exampleHTML(e);
+  else if (e && e.type === 'hw') html = homeworkHTML(e);
+  else html = guideHTML();
+  const main = $('#main');
+  main.innerHTML = `<div class="wrap">${html}</div>`;
+  if (window.hljs) main.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+  renderSide();
+  if (target){ const t = document.getElementById(target); if (t){ t.scrollIntoView({block:'start'}); if (t.classList.contains('chunk')){ t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 1400); } } }
+  else window.scrollTo(0,0);
+  if (window.innerWidth <= 860) setMenu(false);
+}
+
+// ---------- events
+function setMenu(open){ $('#side').classList.toggle('collapsed', !open); $('#btnMenu').setAttribute('aria-expanded', open); $('#btnMenu').textContent = open ? 'Hide list' : 'List'; }
+$('#btnMenu').addEventListener('click', () => setMenu($('#side').classList.contains('collapsed')));
+$('#typeChips').addEventListener('click', ev => { const b = ev.target.closest('[data-type]'); if (!b) return; filterType = b.dataset.type; store('s2103.type', filterType); renderSide(); });
+$('#partChips').addEventListener('click', ev => { const b = ev.target.closest('[data-part]'); if (!b) return; filterPart = b.dataset.part; store('s2103.part', filterPart); renderSide(); });
+$('#search').addEventListener('input', ev => { query = ev.target.value.trim().toLowerCase(); renderList(); });
+document.addEventListener('click', async ev => {
+  const c = ev.target.closest('[data-copy]');
+  if (!c) return;
+  const code = document.getElementById(c.dataset.copy).querySelector('pre code');
+  const text = code.textContent.split('\n').filter(l => !l.startsWith('#>')).join('\n').trim();
+  try { await navigator.clipboard.writeText(text); c.textContent = 'Copied'; }
+  catch(_) { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); c.textContent = 'Selected'; }
+  setTimeout(() => c.textContent = 'Copy', 1500);
+});
+window.addEventListener('hashchange', render);
+filterType = recall('s2103.type') || 'all'; filterPart = recall('s2103.part') || 'all';
+if (window.innerWidth <= 860) setMenu(false);
+render();
 </script>
 </body>
 </html>

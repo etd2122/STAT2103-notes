@@ -1,37 +1,43 @@
-# STAT 2103 · Applied Linear Regression notebook
+# STAT 2103 · Applied Linear Regression study guide
 
-Course site for STAT UN2103 Applied Linear Regression (Columbia, Fall 2026): handwritten lecture notes, homework sets, and the class R examples, organized by date.
+Typed lecture notes, explained R code, and homework guides for STAT UN2103 (Columbia, Fall 2026).
 
 **Live site:** https://etd2122.github.io/STAT2103-notes/
 
-## What's here
+## What's on the site
+
+- **Lecture notes (L01–L09):** each handwritten lecture typed up with definitions, formulas, worked examples, and a "Remember for the test" list. The original scanned PDF is linked from each one.
+- **R examples (R1–R6):** every class notebook split into boxes. Each box has the code with its output and plots on the left, and "What this does" plus an explanation on the right. A yellow edge marks the boxes most likely to matter on an exam.
+- **Homework (HW1–HW4):** each problem with an approach, the notes and R examples to use, and R starter code.
+- **Study guide:** all the "Remember for the test" points on one page.
+- **Formula sheet:** every formula box from the notes.
+
+## Folders
 
 | Folder | Contents |
 | --- | --- |
-| `notes/` | Scanned lecture notes, one PDF per class (`YYYY-MM-DD-topic.pdf`) |
-| `assignments/` | Homework 1–4 PDFs |
-| `code/` | Each R example as a runnable `.R` script, prose kept as comments |
-| `examples/` | The original rendered R notebooks (HTML, with output and plots) |
-| `thumbs/` | First-page previews used on the site |
-| `index.html` | The site itself (no build step) |
+| `content/notes/` | Typed notes, one Markdown file per lecture |
+| `content/examples/` | Box titles and explanations for each R example |
+| `content/homework/` | Homework guides |
+| `data/site.js` | Generated from `content/` (don't edit by hand) |
+| `notes/`, `assignments/` | Original PDFs |
+| `examples/`, `code/` | Original R notebooks (HTML) and plain `.R` scripts |
+| `img/examples/`, `thumbs/` | Plots and PDF previews |
+| `build/` | The build script |
 
-## Publish on GitHub Pages
+## Editing
 
-1. Create a new repository on GitHub (for example `stat2103-notes`).
-2. Upload everything in this folder to it (drag the files into **Add file → Upload files**, or `git push`).
-3. Go to **Settings → Pages**, set **Source** to *Deploy from a branch*, choose `main` and `/ (root)`, and save.
-4. The site appears at `https://<your-username>.github.io/stat2103-notes/` within a minute or two.
-
-## Adding a new lecture, homework, or example
-
-Everything on the page comes from three lists near the bottom of `index.html`:
-
-- `LEC` — lectures. Add `{d:"Oct 14", dow:"Wed", slug:"2026-10-14-topic", t:"Title", p:PAGES, desc:"One line", ex:[], hw:[]}` and drop `notes/2026-10-14-topic.pdf` plus a `thumbs/2026-10-14-topic.jpg` preview.
-- `HW` — homework. Add `{n:5, p:PAGES, topics:[...], data:[...]}` with `assignments/hw5.pdf` and `thumbs/hw5.jpg`.
-- `EX` — R examples. Add a key matching `code/<key>.R` and `examples/<key>.html`.
-
-Make a thumbnail with: `pdftoppm -r 50 -jpeg -f 1 -l 1 -singlefile notes/FILE.pdf thumbs/FILE`
+1. Edit the Markdown in `content/`.
+   - Notes use `$...$` for math and `:::formula Title` … `:::` for boxes (`def`, `formula`, `example`, `tip`, `r`).
+   - Example boxes start with `### box: Title`, then `items:` (which code/output/plots from the notebook to include), `what:`, `key: true` for exam-important, and `explain:` followed by `- bullet` lines.
+2. Rebuild (needs Python 3 with `markdown-it-py`, and Node):
+   ```
+   cd build && npm install && cd ..
+   pip install markdown-it-py
+   python3 build/build.py
+   ```
+3. Commit and push. GitHub Pages updates in a minute or two.
 
 ## Data files
 
-Some scripts read data that isn't included: `academics.csv` (simulating-regression) and `language.Rdata` (slr-inference); the homeworks use `scores.csv`, `cars.csv`, and `hurricanes.csv`. Put them in a `data/` folder and point the file paths in the scripts there.
+The data files aren't included: `hibbs.dat`, `academics.csv` and `language.Rdata` (R examples), and `scores.csv`, `cars.csv` and `hurricanes.csv` (homework). Put them in a `data/` folder and change the file paths in the code.

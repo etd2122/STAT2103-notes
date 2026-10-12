@@ -1,0 +1,6 @@
+{
+  "name": "stat2103-notes-build",
+  "private": true,
+  "description": "Renders math in the notes to MathML at build time",
+  "dependencies": { "katex": "0.16.9" }
+}
