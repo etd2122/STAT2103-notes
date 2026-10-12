@@ -18,22 +18,11 @@
   --code-bg:#eef2f8;
   --t-lec:#55617a; --t-rex:#257a5c; --t-hw:#1f5fae;
   --hl-kw:#8a2f9e; --hl-str:#2b7a2b; --hl-num:#b3541e; --hl-com:#7a8496; --hl-fn:#1f5fae;
+  color-scheme:light;
   --display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
   --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --paper:#0f141b; --panel:#161d27; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442;
-  --accent:#6ea8ff; --accent-ink:#0f141b; --accent-soft:#18263a; --mark:#e9cf4f; --mark-ink:#2b2300; --mark-soft:#2c2814;
-  --ok:#5fc39b; --ok-soft:#14291f; --warn:#e3a45a; --warn-soft:#2c2114;
-  --code-bg:#111821; --t-lec:#a7b3c6; --t-rex:#5fc39b; --t-hw:#6ea8ff;
-  --hl-kw:#d59be0; --hl-str:#7fd39a; --hl-num:#f0a36a; --hl-com:#7d8898; --hl-fn:#8ab8ff; color-scheme:dark }}
-:root[data-theme="dark"]{
-  --paper:#0f141b; --panel:#161d27; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2a3442;
-  --accent:#6ea8ff; --accent-ink:#0f141b; --accent-soft:#18263a; --mark:#e9cf4f; --mark-ink:#2b2300; --mark-soft:#2c2814;
-  --ok:#5fc39b; --ok-soft:#14291f; --warn:#e3a45a; --warn-soft:#2c2114;
-  --code-bg:#111821; --t-lec:#a7b3c6; --t-rex:#5fc39b; --t-hw:#6ea8ff;
-  --hl-kw:#d59be0; --hl-str:#7fd39a; --hl-num:#f0a36a; --hl-com:#7d8898; --hl-fn:#8ab8ff; color-scheme:dark }
 
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -127,8 +116,6 @@ section.block{display:flex;flex-direction:column;gap:12px}
 .box-t{font-family:var(--display);font-weight:600;font-size:16px}
 .box-def{border-color:var(--accent);background:var(--accent-soft)}.box-def .box-k{color:var(--accent)}
 .box-formula{border-color:var(--mark);background:var(--mark-soft)}.box-formula .box-k{color:var(--mark-ink)}
-:root[data-theme="dark"] .box-formula .box-k{color:var(--mark)}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .box-formula .box-k{color:var(--mark)}}
 .box-example{border-color:var(--ok);background:var(--ok-soft)}.box-example .box-k{color:var(--ok)}
 .box-tip{border-color:var(--warn);background:var(--warn-soft)}.box-tip .box-k{color:var(--warn)}
 .box-r{background:var(--code-bg)}.box-r .box-k{color:var(--t-rex)}
