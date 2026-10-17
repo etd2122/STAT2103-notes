@@ -181,7 +181,8 @@ def parse_boxes(body):
 
 # ---------------------------------------------------------------- main
 def main():
-    site = {"notes": [], "examples": [], "homework": [], "formulas": []}
+    site = {"notes": [], "examples": [], "homework": [], "formulas": [],
+            "datasets": sorted(os.listdir(J("datasets"))) if os.path.isdir(J("datasets")) else []}
     # notes
     for fn in sorted(os.listdir(J("content", "notes"))):
         meta, body = split_front(open(J("content", "notes", fn), encoding="utf-8").read())

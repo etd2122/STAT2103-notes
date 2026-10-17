@@ -40,4 +40,4 @@ Typed lecture notes, explained R code, and homework guides for STAT UN2103 (Colu
 
 ## Data files
 
-The data files aren't included: `hibbs.dat`, `academics.csv` and `language.Rdata` (R examples), and `scores.csv`, `cars.csv` and `hurricanes.csv` (homework). Put them in a `data/` folder and change the file paths in the code.
+`datasets/` holds the homework data uploaded so far: `hurricanes.csv` (HW4, HW5), `plants.csv` and `salmonella.csv` (HW5). Each homework page links to its files. Still missing: `scores.csv` (HW1–2), `cars.csv` (HW3), and the class-example data (`hibbs.dat`, `academics.csv`, `language.Rdata`, `rain.csv`). Drop new files into `datasets/` and rebuild, and the links appear automatically.

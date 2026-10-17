@@ -354,7 +354,9 @@ function homeworkHTML(e){
   return headHTML(e, 'Homework') +
   `<section class="block"><div class="block-h"><h3>Files</h3></div>
      <div class="files">${fileCard(e.pdf, 'pdf', `Homework ${e.num}`, 'assignment', e.thumb)}</div>
-     <div class="related">Data: ${(e.data||[]).map(d => `<code>${esc(d)}</code>`).join(' ') || 'none'} (not included in this repo)</div>
+     <div class="related">Data: ${(e.data||[]).map(d => (S.datasets||[]).includes(d)
+        ? `<a class="rel" href="datasets/${esc(d)}" download><b class="tc-hw">CSV</b>${esc(d)}</a>`
+        : `<span class="rel" title="Not uploaded yet"><b>CSV</b>${esc(d)} · not uploaded</span>`).join('') || 'none'}</div>
      <div class="related">Use ${[...lecs, ...exs].map(relLink).join('')}</div>
    </section>` + sectionsHTML(e, true);
 }
