@@ -151,6 +151,15 @@ pre code{font-family:inherit;background:none}
 .label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:4px}
 .chunk-q .label{color:var(--accent)}
 .chunk-q code,.chunk-note code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:0 4px;border-radius:3px}
+.concept{grid-column:1/-1;border-top:1px solid var(--line);padding:14px 16px 6px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 24px;background:var(--panel)}
+.concept .idea{grid-column:1/-1;background:var(--ok-soft);border-left:3px solid var(--ok);border-radius:4px;padding:10px 14px;margin-bottom:8px}
+.concept .idea .label{color:var(--ok)}
+.concept .idea p{margin:0;font-size:15px}
+.concept .walk,.concept .pit{font-size:14px;min-width:0}
+.concept ol,.concept ul{margin:0 0 8px;padding-left:20px}
+.concept li{margin:0 0 7px}
+.concept .pit .label{color:var(--warn)}
+.concept code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:0 4px;border-radius:3px}
 .chunk.flash{outline:3px solid var(--mark);outline-offset:2px}
 .hljs-keyword,.hljs-built_in,.hljs-literal{color:var(--hl-kw)}
 .hljs-string{color:var(--hl-str)}
@@ -188,6 +197,7 @@ pre code{font-family:inherit;background:none}
   .head h2{font-size:27px}
   .chunk{grid-template-columns:minmax(0,1fr)}
   .chunk-side{border-left:0;border-top:1px dashed var(--line)}
+  .concept{grid-template-columns:minmax(0,1fr)}
   .fgrid{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -302,6 +312,14 @@ function headHTML(e, kind, extra){
     <div class="badges">${e._part ? `<span class="badge part">${esc(e._part)}</span>` : ''}${(e.topics||[]).map(t => `<span class="badge">${esc(t)}</span>`).join('')}</div>
   </header>`;
 }
+function conceptHTML(b){
+  if (!b.idea && !(b.walk||[]).length && !(b.pitfall||[]).length) return '';
+  return `<div class="concept">
+    ${b.idea ? `<div class="idea"><span class="label">The big idea</span><p>${b.idea}</p></div>` : ''}
+    ${(b.walk||[]).length ? `<div class="walk"><span class="label">Think it through, step by step</span><ol>${b.walk.map(x => `<li>${x}</li>`).join('')}</ol></div>` : ''}
+    ${(b.pitfall||[]).length ? `<div class="pit"><span class="label">Common mistakes</span><ul>${b.pitfall.map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''}
+  </div>`;
+}
 function chunkHTML(e, b, isHW){
   const anchor = `${e.id}-b${b.n}`;
   const hasCode = !!(b.code && b.code.trim());
@@ -310,13 +328,13 @@ function chunkHTML(e, b, isHW){
       <div class="chunk-note"><span class="label">${isHW ? 'How to approach it' : 'Explanation'}</span><ul>${(b.explain||[]).map(x => `<li>${x}</li>`).join('')}</ul></div>
     </div>`;
   if (!hasCode) return `<article class="chunk solo${b.key ? ' key' : ''}" id="${anchor}">
-      <div class="chunk-bar"><span class="num">${String(b.n).padStart(2,'0')}</span><span class="lbl">${b.title}</span>${b.key ? '<span class="star">Exam</span>' : ''}</div>${side}</article>`;
+      <div class="chunk-bar"><span class="num">${String(b.n).padStart(2,'0')}</span><span class="lbl">${b.title}</span>${b.key ? '<span class="star">Exam</span>' : ''}</div>${side}${conceptHTML(b)}</article>`;
   return `<article class="chunk${b.key ? ' key' : ''}" id="${anchor}">
     <div class="chunk-code">
       <div class="chunk-bar"><span class="num">${String(b.n).padStart(2,'0')}</span><span class="lbl">${b.title}</span>${b.key ? '<span class="star">Exam</span>' : ''}<button class="copy" type="button" data-copy="${anchor}">Copy</button></div>
       <pre><code class="language-r">${esc(b.code)}</code></pre>
       ${b.imgs && b.imgs.length ? `<div class="plots">${b.imgs.map(src => `<a href="${esc(src)}" target="_blank" rel="noopener"><img src="${esc(src)}" alt="Plot produced by this code" loading="lazy"></a>`).join('')}</div>` : ''}
-    </div>${side}</article>`;
+    </div>${side}${conceptHTML(b)}</article>`;
 }
 function sectionsHTML(e, isHW){
   const n = e.sections.reduce((a,s) => a + s.boxes.length, 0);

@@ -157,7 +157,7 @@ def parse_boxes(body):
             if cur_sec is None: cur_sec = {"title": "", "boxes": []}; sections.append(cur_sec)
             cur = {"title": ln[len("### box:"):].strip(), "explain": []}; cur_sec["boxes"].append(cur)
         elif cur is not None:
-            m = re.match(r"^(items|what|key|question|explain|code):\s*(.*)$", ln)
+            m = re.match(r"^(items|what|key|question|explain|code|idea|walk|pitfall):\s*(.*)$", ln)
             if m:
                 k, v = m.group(1), m.group(2)
                 if k == "code":
@@ -168,12 +168,12 @@ def parse_boxes(body):
                             buf.append(lines[j]); j += 1
                         i = j
                     cur["code"] = "\n".join(buf)
-                elif k == "explain":
-                    cur["_in_explain"] = True
+                elif k in ("explain", "walk", "pitfall"):
+                    cur["_in_explain"] = k; cur.setdefault(k, [])
                 else:
                     cur[k] = v; cur["_in_explain"] = False
             elif ln.startswith("- ") and cur.get("_in_explain"):
-                cur["explain"].append(ln[2:].strip())
+                cur[cur["_in_explain"]].append(ln[2:].strip())
         i += 1
     for s in sections:
         for b in s["boxes"]: b.pop("_in_explain", None)
@@ -225,6 +225,8 @@ def main():
                 n += 1
                 b.update({"n": n, "question": render(b.get("question", ""), True),
                           "explain": [render(x, True) for x in b["explain"]], "title": render(b["title"], True),
+                          "idea": render(b.get("idea", ""), True), "walk": [render(x, True) for x in b.get("walk", [])],
+                          "pitfall": [render(x, True) for x in b.get("pitfall", [])],
                           "code": b.get("code", "")})
         site["homework"].append({
             "id": meta["id"], "type": "hw", "num": meta["num"], "title": meta["title"], "pdf": meta["pdf"],
