@@ -59,7 +59,7 @@ a{color:var(--accent)}
 .item .tag{font-family:var(--mono);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
 .item .t{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .item .meta{grid-column:2;font-size:12px;color:var(--muted)}
-.tc-lec{color:var(--t-lec)}.tc-rex{color:var(--t-rex)}.tc-hw{color:var(--t-hw)}
+.tc-lec{color:var(--t-lec)}.tc-rex{color:var(--t-rex)}.tc-hw{color:var(--t-hw)}.tc-prac{color:var(--warn)}
 .side-body{display:flex;flex-direction:column;gap:12px}
 .side-foot{margin-top:auto;font-size:12px;color:var(--muted)}
 .empty-line{color:var(--muted);font-size:14px;font-style:italic;padding:8px}
@@ -234,7 +234,7 @@ const S = window.SITE || {notes:[],examples:[],homework:[],formulas:[]};
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const strip = h => String(h || '').replace(/<annotation[^>]*>.*?<\/annotation>/g,'').replace(/<[^>]+>/g,' ');
-const TYPES = {lec:{label:'Lecture notes', short:'Notes'}, rex:{label:'R examples', short:'R code'}, hw:{label:'Homework', short:'Homework'}};
+const TYPES = {lec:{label:'Lecture notes', short:'Notes'}, rex:{label:'R examples', short:'R code'}, hw:{label:'Homework', short:'Homework'}, prac:{label:'Practice exams', short:'Practice'}};
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fmtDate = d => { const [y,m,dd] = d.split('-'); return `${MONTHS[+m-1]} ${+dd}`; };
 
@@ -243,9 +243,10 @@ const BY = {};
 S.notes.forEach(e => BY[e.id] = e);
 S.examples.forEach(e => BY[e.id] = e);
 S.homework.forEach(e => BY[e.id] = e);
+(S.practice||[]).forEach(e => BY[e.id] = e);
 const partOf = e => e.type === 'lec' ? e.part : e.type === 'rex' ? (BY[e.lecture]?.part || '') :
   ((e.lectures || []).map(l => BY[l]?.part).includes('Part II') ? 'Part II' : 'Part I');
-const ALL = [...S.notes, ...S.examples, ...S.homework];
+const ALL = [...S.notes, ...S.examples, ...S.homework, ...(S.practice||[])];
 ALL.forEach(e => {
   e._part = partOf(e);
   const boxes = (e.sections || []).flatMap(s => s.boxes);
@@ -261,7 +262,7 @@ function recall(k){try{return localStorage.getItem(k)}catch(e){return null}}
 
 // ---------- sidebar
 function renderChips(){
-  $('#typeChips').innerHTML = [['all','All'],['lec','Notes'],['rex','R code'],['hw','Homework']]
+  $('#typeChips').innerHTML = [['all','All'],['lec','Notes'],['rex','R code'],['hw','Homework'],['prac','Practice']]
     .map(([v,l]) => `<button class="chip" type="button" data-type="${v}" aria-pressed="${filterType===v}">${l}</button>`).join('');
   $('#partChips').innerHTML = [['all','Any part'],['Part I','Part I · Review'],['Part II','Part II · Regression']]
     .map(([v,l]) => `<button class="chip" type="button" data-part="${v}" aria-pressed="${filterPart===v}">${l}</button>`).join('');
@@ -325,7 +326,7 @@ function chunkHTML(e, b, isHW){
   const hasCode = !!(b.code && b.code.trim());
   const side = `<div class="chunk-side">
       <div class="chunk-q"><span class="label">${isHW ? 'Question' : 'What this does'}</span>${isHW ? b.question : b.what}</div>
-      <div class="chunk-note"><span class="label">${isHW ? 'How to approach it' : 'Explanation'}</span><ul>${(b.explain||[]).map(x => `<li>${x}</li>`).join('')}</ul></div>
+      <div class="chunk-note"><span class="label">${isHW ? (e.type === 'prac' ? 'Answer and why' : 'How to approach it') : 'Explanation'}</span><ul>${(b.explain||[]).map(x => `<li>${x}</li>`).join('')}</ul></div>
     </div>`;
   if (!hasCode) return `<article class="chunk solo${b.key ? ' key' : ''}" id="${anchor}">
       <div class="chunk-bar"><span class="num">${String(b.n).padStart(2,'0')}</span><span class="lbl">${b.title}</span>${b.key ? '<span class="star">Exam</span>' : ''}</div>${side}${conceptHTML(b)}</article>`;
@@ -369,13 +370,14 @@ function exampleHTML(e){
 function homeworkHTML(e){
   const lecs = (e.lectures||[]).map(l => BY[l]).filter(Boolean);
   const exs = [...new Set(lecs.flatMap(l => exFor(l.id)))];
-  return headHTML(e, 'Homework') +
+  const prac = e.type === 'prac';
+  return headHTML(e, prac ? 'Practice exam' : 'Homework') +
   `<section class="block"><div class="block-h"><h3>Files</h3></div>
-     <div class="files">${fileCard(e.pdf, 'pdf', `Homework ${e.num}`, 'assignment', e.thumb)}</div>
-     <div class="related">Data: ${(e.data||[]).map(d => (S.datasets||[]).includes(d)
+     <div class="files">${fileCard(e.pdf, 'pdf', prac ? `Exam ${e.num} practice questions` : `Homework ${e.num}`, prac ? 'questions + tables' : 'assignment', e.thumb)}</div>
+     ${prac ? '' : `<div class="related">Data: ${(e.data||[]).map(d => (S.datasets||[]).includes(d)
         ? `<a class="rel" href="datasets/${esc(d)}" download><b class="tc-hw">CSV</b>${esc(d)}</a>`
-        : `<span class="rel" title="Not uploaded yet"><b>CSV</b>${esc(d)} · not uploaded</span>`).join('') || 'none'}</div>
-     <div class="related">Use ${[...lecs, ...exs].map(relLink).join('')}</div>
+        : `<span class="rel" title="Not uploaded yet"><b>CSV</b>${esc(d)} · not uploaded</span>`).join('') || 'none'}</div>`}
+     <div class="related">${prac ? 'Covers' : 'Use'} ${[...lecs, ...exs].map(relLink).join('')}</div>
    </section>` + sectionsHTML(e, true);
 }
 function guideHTML(){
@@ -413,14 +415,14 @@ function formulasHTML(){
 function render(){
   const raw = location.hash.slice(1);
   let id = raw || 'guide', target = null;
-  if (/^(L|R|HW)\d+-b\d+$/.test(raw)){ id = raw.split('-b')[0]; target = raw; }
+  if (/^(L|R|HW|PE)\d+-b\d+$/.test(raw)){ id = raw.split('-b')[0]; target = raw; }
   else if (/^L\d+-/.test(raw)){ id = raw.slice(0,3); target = raw; }
   let html;
   const e = BY[id];
   if (id === 'formulas') html = formulasHTML();
   else if (e && e.type === 'lec') html = lectureHTML(e);
   else if (e && e.type === 'rex') html = exampleHTML(e);
-  else if (e && e.type === 'hw') html = homeworkHTML(e);
+  else if (e && (e.type === 'hw' || e.type === 'prac')) html = homeworkHTML(e);
   else html = guideHTML();
   const main = $('#main');
   main.innerHTML = `<div class="wrap">${html}</div>`;

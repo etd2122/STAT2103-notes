@@ -215,25 +215,28 @@ def main():
             "takeaways": [render(t, True) for t in meta.get("takeaways", [])],
             "notebook": f"examples/{key}.html", "script": f"code/{key}.R", "sections": sections,
         })
-    # homework
-    for fn in sorted(os.listdir(J("content", "homework"))):
-        meta, body = split_front(open(J("content", "homework", fn), encoding="utf-8").read())
-        sections = parse_boxes(body)
-        n = 0
-        for s in sections:
-            for b in s["boxes"]:
-                n += 1
-                b.update({"n": n, "question": render(b.get("question", ""), True),
-                          "explain": [render(x, True) for x in b["explain"]], "title": render(b["title"], True),
-                          "idea": render(b.get("idea", ""), True), "walk": [render(x, True) for x in b.get("walk", [])],
-                          "pitfall": [render(x, True) for x in b.get("pitfall", [])],
-                          "code": b.get("code", "")})
-        site["homework"].append({
-            "id": meta["id"], "type": "hw", "num": meta["num"], "title": meta["title"], "pdf": meta["pdf"],
-            "thumb": "thumbs/" + os.path.basename(meta["pdf"]).replace(".pdf", ".jpg"),
-            "lectures": csv(meta.get("lectures", "")), "data": csv(meta.get("data", "")),
-            "topics": csv(meta.get("topics", "")), "summary": render(meta.get("summary", ""), True), "sections": sections,
-        })
+    # homework and practice exams share one format
+    site.setdefault("practice", [])
+    for folder, kind, key in (("homework", "hw", "homework"), ("practice", "prac", "practice")):
+        if not os.path.isdir(J("content", folder)): continue
+        for fn in sorted(os.listdir(J("content", folder))):
+            meta, body = split_front(open(J("content", folder, fn), encoding="utf-8").read())
+            sections = parse_boxes(body)
+            n = 0
+            for s in sections:
+                for b in s["boxes"]:
+                    n += 1
+                    b.update({"n": n, "question": render(b.get("question", ""), True),
+                              "explain": [render(x, True) for x in b["explain"]], "title": render(b["title"], True),
+                              "idea": render(b.get("idea", ""), True), "walk": [render(x, True) for x in b.get("walk", [])],
+                              "pitfall": [render(x, True) for x in b.get("pitfall", [])],
+                              "code": b.get("code", ""), "key": str(b.get("key", "")).lower() == "true"})
+            site[key].append({
+                "id": meta["id"], "type": kind, "num": meta["num"], "title": meta["title"], "pdf": meta["pdf"],
+                "thumb": "thumbs/" + os.path.basename(meta["pdf"]).replace(".pdf", ".jpg"),
+                "lectures": csv(meta.get("lectures", "")), "data": csv(meta.get("data", "")),
+                "topics": csv(meta.get("topics", "")), "summary": render(meta.get("summary", ""), True), "sections": sections,
+            })
     # math → MathML
     if MATH:
         res = subprocess.run(["node", J("build", "render-math.js")], input=json.dumps([{"tex": t, "display": d} for t, d in MATH]),
