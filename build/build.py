@@ -190,7 +190,7 @@ def main():
         thumb = "thumbs/" + os.path.basename(meta["pdf"]).replace(".pdf", ".jpg")
         site["notes"].append({
             "id": meta["id"], "type": "lec", "date": meta["date"], "title": meta["title"], "part": meta.get("part", ""),
-            "pdf": meta["pdf"], "thumb": thumb, "topics": csv(meta.get("topics", "")), "examples": csv(meta.get("examples", "")),
+            "pdf": meta["pdf"], "slides": meta.get("slides", ""), "thumb": thumb, "topics": csv(meta.get("topics", "")), "examples": csv(meta.get("examples", "")),
             "summary": render(meta.get("summary", ""), True), "takeaways": [render(t, True) for t in meta.get("takeaways", [])],
             "html": html_, "toc": toc,
         })
