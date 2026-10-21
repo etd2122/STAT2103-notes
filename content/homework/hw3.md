@@ -110,3 +110,54 @@ walk:
 pitfall:
 - Swapping x and y in `lm()`. The formula is `response ~ predictor`.
 - Over-reading the intercept: a 0-lb car doesn't exist.
+
+=== wrap-up ===
+
+## Every formula used
+
+:::formula Confidence intervals
+- σ unknown (use s): $\bar x \pm t_{n-1}\,\dfrac{s}{\sqrt n}$ (#1)
+- σ known: $\bar x \pm z\,\dfrac{\sigma}{\sqrt n}$
+- 90% → 0.95 column; 95% → 0.975 column; 99% → 0.995 column
+:::
+
+:::formula Hypothesis tests
+- Proportion: $z = \dfrac{\hat p - p_0}{\sqrt{p_0(1-p_0)/n}}$, using $p_0$ in the SE (#3)
+- Mean, σ known: $z = \dfrac{\bar x - \mu_0}{\sigma/\sqrt n}$ (#4)
+- p-value: lower one-sided $= P(Z \le z)$; upper $= P(Z \ge z)$; two-sided $= 2P(Z \ge \lvert z\rvert)$
+- Reject $H_0$ when p-value < α
+:::
+
+:::formula Standardizing and least squares
+- $X \sim N(\mu, \sigma^2)$ ⇒ $Z = (X - \mu)/\sigma \sim N(0, 1)$ (#2)
+- $\hat\beta_1 = \dfrac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2}$, $\hat\beta_0 = \bar y - \hat\beta_1\bar x$, $\hat y = \hat\beta_0 + \hat\beta_1 x$ (#5)
+:::
+
+## Learning summary
+
+- **Answers:** 90% CI (183.5, 192.5) bpm using t with 8 df (#1); $Z \sim N(0, 1)$ (#2); bottles $z = -1.70$, p ≈ 0.044, reject at 0.05 (#3); uranium $z = -2.32$, two-sided p ≈ 0.020, reject at 0.05 but **not** at 0.01 (#4).
+- **CI = estimate ± multiplier × SE.** Use **t** when σ is estimated by s, and z when σ is known or for proportions.
+- A test asks **"if nothing changed, how surprising is this?"** The research question sets the direction (one- or two-sided); the data never do.
+- The p-value doesn't depend on α. The same evidence can be "significant" at 0.05 but not at 0.01.
+- First regression (#5): plot first, fit `response ~ predictor`, then predict inside the observed range.
+
+## What to take away from the R output
+
+:::r Reading the R
+- `qt(0.95, df = n - 1)` = the t multiplier for a **90%** interval (5% in each tail). On paper, use the t table's 0.95 column, df row.
+- `pnorm(z)` = **lower-tail** p-value; `2 * pnorm(-abs(z))` = **two-sided** p-value.
+- `lm(y ~ x)` returns $\hat\beta_0$ (`(Intercept)`) and $\hat\beta_1$ (the x row). The formula is always `response ~ predictor`.
+- `fit$coefficients[1] + fit$coefficients[2] * 4315` is just $\hat\beta_0 + \hat\beta_1 x$ written in R.
+:::
+
+## Common mistakes
+
+:::tip Watch for these
+- `qt(0.90, ...)` for a 90% interval. You need 0.95.
+- "90% of triathletes are in this interval." A CI is about the **mean**.
+- Using $\hat p$ in a test's SE. A test assumes $H_0$, so use $p_0$.
+- Doubling a one-sided p-value, or not doubling a two-sided one.
+- Using t when σ is given as known.
+- Only giving mean and variance for #2. Also name the **family** (Normal).
+- Swapping x and y in `lm()`, or over-interpreting the intercept (a 0-lb car).
+:::

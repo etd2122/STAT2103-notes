@@ -265,7 +265,7 @@ const ALL = [...S.notes, ...S.examples, ...S.homework, ...(S.practice||[])];
 ALL.forEach(e => {
   e._part = partOf(e);
   const boxes = (e.sections || []).flatMap(s => s.boxes);
-  e._hay = [e.id, e.title, (e.topics||[]).join(' '), strip(e.summary), strip(e.html), (e.takeaways||[]).map(strip).join(' '),
+  e._hay = [e.id, e.title, (e.topics||[]).join(' '), strip(e.summary), strip(e.html), strip(e.wrap), (e.takeaways||[]).map(strip).join(' '),
     ...boxes.map(b => strip(b.title) + ' ' + strip(b.what) + ' ' + strip(b.question) + ' ' + (b.code||'') + ' ' + (b.explain||[]).map(strip).join(' '))].join(' ').toLowerCase();
 });
 const hwFor = lecId => S.homework.filter(h => (h.lectures||[]).includes(lecId));
@@ -394,7 +394,8 @@ function homeworkHTML(e){
         ? `<a class="rel" href="datasets/${esc(d)}" download><b class="tc-hw">CSV</b>${esc(d)}</a>`
         : `<span class="rel" title="Not uploaded yet"><b>CSV</b>${esc(d)} · not uploaded</span>`).join('') || 'none'}</div>`}
      <div class="related">${prac ? 'Covers' : 'Use'} ${[...lecs, ...exs].map(relLink).join('')}</div>
-   </section>` + sectionsHTML(e, true);
+   </section>` + sectionsHTML(e, true) +
+  (e.wrap ? `<section class="block wrapup" id="${e.id}-wrap"><div class="block-h"><h3>Wrap-up</h3><span class="count">formulas · summary · R takeaways · mistakes</span></div><div class="prose">${e.wrap}</div></section>` : '');
 }
 function guideHTML(){
   const nBoxes = S.examples.reduce((a,e) => a + e.sections.reduce((b,s) => b + s.boxes.length, 0), 0);

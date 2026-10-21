@@ -132,3 +132,59 @@ walk:
 pitfall:
 - Adding standard deviations: SDs never add, variances do (plus the covariance term).
 - Forgetting the sign flips for a difference: + for M + V, − for M − V.
+
+=== wrap-up ===
+
+## Every formula used
+
+:::formula One random variable
+- $E(X) = \sum x\,P(X = x)$ (#1a)
+- $\text{var}(X) = \sum (x - E(X))^2 P(X = x)$
+- Shortcut: $\text{var}(X) = E(X^2) - (E(X))^2$, and $\text{sd}(X) = \sqrt{\text{var}(X)}$ (#1b)
+- $E(aX + b) = aE(X) + b$ and $\text{var}(aX + b) = a^2\,\text{var}(X)$ (#1c, #2)
+- Standardizing: $Z = \dfrac{X - \mu}{\sigma}$ has $E(Z) = 0$ and $\text{var}(Z) = 1$ (#2)
+:::
+
+:::formula Two random variables
+- $\text{cov}(X,Y) = E[(X - E(X))(Y - E(Y))]$
+- Shortcut: $\text{cov}(X,Y) = E(XY) - E(X)E(Y)$
+- Linear rule: $\text{cov}(X, aX + b) = a\,\text{var}(X)$ (#1c)
+- Joint table: cell $= P(W = w, Y = y)$; all cells add to 1 (#3a)
+- Conditional: $P(A \mid B) = \dfrac{P(A \text{ and } B)}{P(B)}$ (#3b)
+- $\rho = \dfrac{\text{cov}(X,Y)}{\sigma_X\sigma_Y}$ and $\text{var}(X \pm Y) = \sigma_X^2 + \sigma_Y^2 \pm 2\rho\,\sigma_X\sigma_Y$ (#5)
+:::
+
+:::formula Binomial and data
+- $P(Y = k) = \binom{n}{k}p^k(1-p)^{n-k}$; $P(Y > k) = 1 - P(Y \le k)$ (#4)
+- Sample mean $\bar d = \frac1n\sum d_i$; sample SD $s = \sqrt{\frac{1}{n-1}\sum (d_i - \bar d)^2}$ (#5b)
+:::
+
+## Learning summary
+
+- **Answers:** $E(X) = 7/3$, $\text{var}(X) = 20/9$, $\text{cov}(X, 2X - 1) = 40/9$; standardized Z has mean 0 and variance 1; $P(W = 3 \mid Y = 0) = 0.05/0.55 \approx 0.091$; the 2-light route (0.25 vs. 0.344 chance of being late); $\rho \approx 0.38$ between GRE sections.
+- Every summary of a distribution (mean, variance, covariance) is a **probability-weighted average** over the outcomes.
+- **Shifting** a variable moves its mean but not its spread. **Scaling** by $a$ multiplies the SD by $\lvert a\rvert$ and the variance by $a^2$. That's why standardizing always gives mean 0 and SD 1.
+- **Conditioning** = zooming in on what you know happened, then rescaling so it adds to 1.
+- Count of successes in n independent yes/no trials → **Binomial**.
+- Variances of sums need the **covariance term**. Positive correlation makes sums more variable and differences less variable.
+
+## What to take away from the R output
+
+:::r Reading the R
+- R works on **whole vectors at once**: `x * p` multiplies element by element, so `sum(x * p)` *is* the formula for $E(X)$.
+- `sum(p)` returning 1 is a built-in check that the pmf is valid.
+- `pbinom(k, n, p)` is always **≤ k**. Any "more than" or "at least" question needs `1 -` in front.
+- `data$column` pulls out one variable; subtracting two columns gives one difference **per row** (per student).
+- `sd()` is the **sample** SD (divides by n − 1). Compare it to the theory: the SD of $M - V$ should be near $\sqrt{164 - 2(0.38)(80)} \approx 10.1$, smaller than $\sqrt{164} \approx 12.8$ for independent sections.
+:::
+
+## Common mistakes
+
+:::tip Watch for these
+- $E(X^2) \ne (E(X))^2$. Square first, then average.
+- $\text{var}(aX + b) = a^2\,\text{var}(X)$, **not** $a\,\text{var}(X)$; the $+b$ disappears.
+- Thinking standardizing makes a variable Normal. It fixes the center and spread, not the shape.
+- Using $P(W = 3) = 0.05$ instead of the conditional $P(W = 3 \mid Y = 0)$. Divide by the probability of what you're **given**.
+- "More than half" of 6 is 4 or more. 3 of 6 is exactly half and doesn't count.
+- Adding SDs instead of variances, or forgetting that the covariance sign flips for $M - V$.
+:::

@@ -183,3 +183,56 @@ walk:
 pitfall:
 - Answering (d) and (e) the same way. One asks about the model, the other about the variable.
 - Saying R² ≈ 0 means temperature and salmonella are unrelated.
+
+=== wrap-up ===
+
+## Every formula used
+
+:::formula Inference for the slope
+- $t = \dfrac{\hat\beta_1 - 0}{\text{se}(\hat\beta_1)}$ with $n - 2$ df; $\text{se}(\hat\beta_1) = \dfrac{\hat\sigma}{\sqrt{\sum (x_i - \bar x)^2}}$ (#1c–e)
+- One-sided p-value ($H_A: \beta_1 > 0$) = $P(T_{n-2} \ge t)$ = half the two-sided p when $t > 0$
+- CI: $\hat\beta_1 \pm t_{n-2}\,\text{se}(\hat\beta_1)$ (#1f)
+:::
+
+:::formula Intervals at x*
+- CI for the **mean** response: $\hat y^* \pm t_{n-2}\,\hat\sigma\sqrt{\dfrac1n + \dfrac{(x^* - \bar x)^2}{\sum (x_i - \bar x)^2}}$ (#2a–b)
+- PI for **one** new observation: $\hat y^* \pm t_{n-2}\,\hat\sigma\sqrt{1 + \dfrac1n + \dfrac{(x^* - \bar x)^2}{\sum (x_i - \bar x)^2}}$ (#2c, #2e)
+- Inverse prediction: $x = \dfrac{y - \hat\beta_0}{\hat\beta_1}$ (#2d)
+:::
+
+:::formula Model quality
+- $R^2 = 1 - \dfrac{\text{SSE}}{\text{SST}} = r^2$ (#3c)
+- Residual SE $\hat\sigma = \sqrt{\text{SSE}/(n-2)}$: typical size of a miss
+:::
+
+## Learning summary
+
+- **Answers:** plants $t \approx 4.16$, one-sided p ≈ 0.00018 → reject $H_0$; 90% CI for the slope (0.23, 0.55) g per mg (#1). At 959 mb: $\hat y = 92.7$ knots; 95% CI (89.8, 95.5); 99% CI (88.9, 96.5); 95% PI (70.1, 115.2) (#2a–c). 115 knots ↔ about 934 mb, 95% PI (92.1, 137.9), slightly wider (#2d–e). Salmonella $R^2 \approx 0.0001$ (#3).
+- **Direction of $H_A$ comes from the question.** Because nitrogen doses were **randomly assigned**, rejecting $H_0$ supports a **causal** conclusion.
+- **CI vs. PI:** same center. The PI adds individual scatter, so it's much wider (±22 vs. ±3 knots), and it never shrinks to 0 with more data.
+- Higher confidence → wider interval, same center.
+- Intervals are narrowest at $\bar x$ and widen farther away.
+- **Low $R^2$ ≠ no relationship.** Salmonella has a strong curved pattern that a straight line completely misses. The *linear model* is useless; *temperature* is very useful.
+
+## What to take away from the R output
+
+:::r Reading the R
+- `summary(fit)$coefficients`: Estimate, Std. Error, t value ($= \text{Estimate}/\text{SE}$) and `Pr(>|t|)`, which is **always two-sided**.
+- `1 - pt(t, df = n - 2)` gives the one-sided p-value for $H_A: \beta_1 > 0$.
+- `confint(fit, level = 0.90)`: read the **predictor's** row, not the intercept's.
+- `predict(..., interval = "confidence")` → the **average** at x*. `interval = "prediction"` → **one** individual. Output columns are `fit` (center), `lwr` and `upr`.
+- `summary(fit)$r.squared` equals `cor(x, y)^2` in simple regression.
+- `fileEncoding = "UTF-8-BOM"` fixes the hidden character that made a column read as `ï..pressure`.
+:::
+
+## Common mistakes
+
+:::tip Watch for these
+- Reporting `summary()`'s two-sided p-value for a one-sided test.
+- "p = probability H₀ is true." It's the probability of data this extreme *if* H₀ is true.
+- Using `"confidence"` for a single hurricane like Isaias. One storm needs `"prediction"`.
+- Thinking a higher confidence level moves the center.
+- Saying the 115-knot interval is wider "because 115 is bigger." Width depends on the distance of x from $\bar x$.
+- Saying a near-zero $R^2$ means temperature and salmonella are unrelated, or answering (d) and (e) the same way.
+- Leaving out interpretation sentences, or putting written answers inside R chunks.
+:::

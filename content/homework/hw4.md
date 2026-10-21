@@ -133,3 +133,50 @@ walk:
 - For each pair of plots, find which of these three differs and name it in your answer.
 pitfall:
 - Judging by how steep the line looks. Steepness is the slope's value, not its precision.
+
+=== wrap-up ===
+
+## Every formula used
+
+:::formula The fitted line
+- $\hat\beta_1 = \dfrac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2} = r\,\dfrac{s_y}{s_x}$ and $\hat\beta_0 = \bar y - \hat\beta_1\bar x$ (#1a)
+- Prediction: $\hat y = \hat\beta_0 + \hat\beta_1 x$ (#1e–f)
+- The line passes through $(\bar x, \bar y)$: $\hat y(\bar x) = \bar y$ (#1g)
+- One SD of x: $\hat\beta_1 s_x = r\,s_y$, smaller than $s_y$ in size since $\lvert r\rvert < 1$ (#1h–i)
+- Residual: $e_i = y_i - \hat y_i$ (observed − predicted) (#1j)
+:::
+
+:::formula Units and precision
+- Slope units = y-units per x-unit (knots per mb); intercept units = y-units (knots) (#1d)
+- $\text{var}(\hat\beta_1) = \dfrac{\sigma^2}{(n-1)S_x^2}$: more precise with less scatter, more points and more spread-out x (#2–4)
+:::
+
+## Learning summary
+
+- **Answers:** $\widehat{\text{wind}} = 961.5 - 0.906 \cdot \text{pressure}$; 945 mb → 105.4 knots; 750 mb → 282 knots, which is extrapolation (observed pressures are 919–993 mb); at $\bar x = 960.8$ the prediction equals $\bar y = 91.0$; $\hat\beta_1 s_x = -17.0$ vs. $s_y = 20.3$ ($r = -0.84$); Harvey's residual is about +2.4 knots.
+- The slope compares **groups**: storms 1 mb apart in pressure differ by about 0.9 knots on average. Use "differ by," not causal language, for observational data.
+- Predictions are trustworthy only **inside the range of x**.
+- **Regression to the mean:** a storm 1 SD extreme in pressure is predicted to be only |r| = 0.84 SD extreme in wind.
+- A residual measures one storm's "surprise": Harvey was a bit stronger than a typical 937-mb storm.
+- Slope precision depends on **noise, sample size and x-spread**, not on how steep the line is.
+
+## What to take away from the R output
+
+:::r Reading the R
+- `fit$coefficients` gives two numbers: `(Intercept)` = $\hat\beta_0$ and `pressure` = $\hat\beta_1$. The negative slope matches the physics (lower pressure, stronger storm).
+- `abline(fit)` only works **after** `plot()`. Check that the line goes through the middle of the cloud.
+- `predict(fit, newdata = data.frame(pressure = 945))` = plugging into the line. The column name in `newdata` must match the predictor's name exactly.
+- `range(x)` tells you whether a prediction is interpolation or extrapolation.
+- `cor(x, y) * sd(y)` printing the same number as `slope * sd(x)` confirms $\hat\beta_1 s_x = r s_y$.
+:::
+
+## Common mistakes
+
+:::tip Watch for these
+- Causal wording ("lowering pressure increases wind") for observational data.
+- Dropping the negative sign when interpreting the slope or the one-SD difference.
+- Trusting the 750-mb prediction because R computed it. R will compute anything.
+- Residual as predicted − observed. It's **observed − predicted**.
+- Wrong units: the slope is knots **per mb**, not just knots.
+- Judging slope precision by steepness.
+:::

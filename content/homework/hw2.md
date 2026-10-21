@@ -146,3 +146,52 @@ rknow:
 - `data$column` :: Pulls one column out of a data frame.
 - `hist(x, probability = TRUE)` + `curve(..., add = TRUE)` :: A histogram on the density scale with a model's curve on top.
 idea: The four letters d / p / q / r work the same for every distribution (`binom`, `norm`, `t`, …). d = exact probability or height, p = cumulative probability, q = the reverse of p, r = random draws.
+
+=== wrap-up ===
+
+## Every formula used
+
+:::formula Normal
+- $Z = \dfrac{X - \mu}{\sigma}$, so $P(X < a) = P\!\left(Z < \dfrac{a - \mu}{\sigma}\right)$ (#1)
+- Percentile: $x = \mu + z\,\sigma$; the 95th percentile uses $z = 1.64$ (#3a)
+- Sum of $n$ independent $N(\mu, \sigma^2)$: $N(n\mu,\; n\sigma^2)$, so the SD is $\sqrt n\,\sigma$, **not** $n\sigma$ (#3b)
+:::
+
+:::formula Binomial
+- $P(Y = k) = \binom{n}{k}p^k(1-p)^{n-k}$; $E(Y) = np$; $\text{var}(Y) = np(1-p)$ (#2, #4a)
+- At least one: $1 - (1-p)^n$ (#2a)
+- $P(Y \ge k) = 1 - P(Y \le k - 1)$ (#2b, #4b)
+:::
+
+:::formula Confidence interval for a proportion
+$\hat p \pm 2\sqrt{\dfrac{\hat p(1-\hat p)}{n}}$ (or 1.96 instead of 2) (#4c)
+:::
+
+## Learning summary
+
+- **Answers:** the N(151, 8²) model puts about 0.4% below 130 and 0.9% above 170 (#1); 0.502, 0.345, n = 16 (#2); 433 g for a day and 2887 g for a week (#3); 45 expected, $P(Y \ge 56) \approx 0.013$, CI (0.520, 0.724), so p ≠ 0.5 (#4).
+- A model can be **wrong but useful**: GRE scores can't be exactly Normal, but N(151, 8²) is a good approximation because it puts very little probability on impossible scores.
+- "Probability of running out ≤ 5%" means stock the **95th percentile**.
+- For a sum of independent days, **variances add**. High and low days partly cancel, so a week needs less buffer than 7 × one day's buffer.
+- Problem 4 previews **inference**: "how surprising is 56 if p = 0.5?" is a p-value, and "what p values fit the data?" is a confidence interval. Both say p = 0.5 doesn't fit.
+
+## What to take away from the R output
+
+:::r Reading the R
+- **d / p / q / r** works for every distribution: `dbinom` = exact probability, `pnorm` = area to the left, `qnorm` = value for a given area, `rnorm` = random draws.
+- `hist(..., probability = TRUE)` + `curve(dnorm(...), add = TRUE)` is a **visual model check**: does the curve trace the bars?
+- `mean(sims < 130)` estimates a probability by simulation. It should be close to the exact `pnorm(130, 151, 8)` ≈ 0.004, and changes slightly every run.
+- `which(... >= 0.75)[1]` searches all n at once and returns the first one that works.
+- `c(-1, 1) *` gives both ends of an interval in one line.
+:::
+
+## Common mistakes
+
+:::tip Watch for these
+- Off-by-one: $P(Y \ge 6)$ is `1 - pbinom(5, ...)`, not `1 - pbinom(6, ...)`.
+- `qnorm(0.05, ...)` instead of `qnorm(0.95, ...)`. That's the amount you'd run out of 95% of the time.
+- Weekly SD $= 7 \times 20$. Correct: $\sqrt 7 \times 20 \approx 52.9$.
+- Using $p = 0.5$ inside the CI's SE. The CI uses $\hat p$; only the test assumes p = 0.5.
+- Comparing a count histogram to a density curve (forgetting `probability = TRUE`).
+- Concluding *why* the sex ratio changed. The data show p ≠ 0.5, not the cause.
+:::
