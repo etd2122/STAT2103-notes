@@ -118,6 +118,19 @@ section.block{display:flex;flex-direction:column;gap:12px}
 .box-formula{border-color:var(--mark);background:var(--mark-soft)}.box-formula .box-k{color:var(--mark-ink)}
 .box-example{border-color:var(--ok);background:var(--ok-soft)}.box-example .box-k{color:var(--ok)}
 .box-tip{border-color:var(--warn);background:var(--warn-soft)}.box-tip .box-k{color:var(--warn)}
+.prose .tf,.tf{list-style:none;padding:0;margin:0 0 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px}
+.tf li{margin:0;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:start;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:#fff;font-size:14.5px}
+.tf li.pe{background:var(--mark-soft);border-color:#ecd98a}
+.tf li b.t,.tf li b.f{font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:2px 6px;border-radius:4px;margin-top:2px}
+.tf li b.t{background:var(--ok-soft);color:var(--ok)}
+.tf li b.f{background:#fbe4e1;color:#b3261e}
+.tf li em{grid-column:2;font-style:normal;color:var(--muted);font-size:13.5px}
+.quiz .tf li{cursor:pointer}
+.quiz .tf li:not(.shown) b.t,.quiz .tf li:not(.shown) b.f{color:transparent;background:var(--code-bg)}
+.quiz .tf li:not(.shown) em{visibility:hidden}
+.tf-btn{font:inherit;font-size:13px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer}
+.tf-btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.tf li i{color:var(--muted);font-size:12px;font-style:normal;font-family:var(--mono)}
 .box-template{border-color:var(--t-rex);border-left-width:4px}.box-template .box-k{color:var(--t-rex)}
 .tpl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
 .tpl > *,.fgrid > *{min-width:0}
@@ -213,7 +226,7 @@ pre code{font-family:inherit;background:none}
   .chunk{grid-template-columns:minmax(0,1fr)}
   .chunk-side{border-left:0;border-top:1px dashed var(--line)}
   .concept{grid-template-columns:minmax(0,1fr)}
-  .rk-row{grid-template-columns:minmax(0,1fr)}.fgrid,.tpl{grid-template-columns:minmax(0,1fr)}
+  .rk-row{grid-template-columns:minmax(0,1fr)}.tf{grid-template-columns:minmax(0,1fr)}.fgrid,.tpl{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -423,9 +436,13 @@ function formulasHTML(){
   const tpl = T ? `<section class="block" id="templates"><div class="block-h"><h3>Interpretation templates<span class="count">fill in the brackets</span></h3></div>
       <nav class="toc" aria-label="Template sections">${T.toc.map(t => `<a href="#formulas" data-jump="${t.id}">${t.t}</a>`).join('')}</nav>
       <div class="prose tpl" style="max-width:none">${T.html}</div></section>` : '';
+  const TF = S.truefalse;
+  const tf = TF ? `<section class="block" id="truefalse"><div class="block-h"><h3>True/false traps<span class="count">from the practice exam and beyond</span></h3><button class="tf-btn" type="button" id="tf-quiz" aria-pressed="false">Quiz me: hide answers</button></div>
+      <nav class="toc" aria-label="True/false sections">${TF.toc.map(t => `<a href="#formulas" data-jump="${t.id}">${t.t}</a>`).join('')}</nav>
+      <div class="prose tfwrap" style="max-width:none">${TF.html}</div></section>` : '';
   return `<header class="head"><div class="eyebrow"><span class="tc-lec">All lectures</span></div><h2>Formula sheet</h2>
-    <p class="lede">Fill-in-the-blank interpretation templates first, then every formula box from the typed notes, grouped by lecture.</p>
-    <div class="toc"><a href="#formulas" data-jump="templates">Interpretation templates</a><a href="#formulas" data-jump="formulas-list">Formulas by lecture</a></div></header>` + tpl +
+    <p class="lede">Fill-in-the-blank interpretation templates, true/false traps, then every formula box from the typed notes, grouped by lecture.</p>
+    <div class="toc"><a href="#formulas" data-jump="templates">Interpretation templates</a><a href="#formulas" data-jump="truefalse">True/false traps</a><a href="#formulas" data-jump="formulas-list">Formulas by lecture</a></div></header>` + tpl + tf +
   `<div id="formulas-list"></div>` +
   S.notes.map(l => {
     const fs = S.formulas.filter(f => f.lec === l.id);
@@ -471,6 +488,13 @@ document.addEventListener('click', async ev => {
   setTimeout(() => c.textContent = 'Copy', 1500);
 });
 document.addEventListener('click', ev => { const j = ev.target.closest('[data-jump]'); if (!j) return; ev.preventDefault(); const t = document.getElementById(j.dataset.jump); if (t) t.scrollIntoView({block:'start'}); });
+document.addEventListener('click', ev => {
+  const btn = ev.target.closest('#tf-quiz');
+  if (btn) { const sec = document.getElementById('truefalse'); const on = !sec.classList.contains('quiz');
+    sec.classList.toggle('quiz', on); sec.querySelectorAll('.tf li.shown').forEach(li => li.classList.remove('shown'));
+    btn.setAttribute('aria-pressed', on); btn.textContent = on ? 'Show all answers' : 'Quiz me: hide answers'; return; }
+  const li = ev.target.closest('.quiz .tf li'); if (li) li.classList.toggle('shown');
+});
 window.addEventListener('hashchange', render);
 filterType = recall('s2103.type') || 'all'; filterPart = recall('s2103.part') || 'all';
 if (window.innerWidth <= 860) setMenu(false);

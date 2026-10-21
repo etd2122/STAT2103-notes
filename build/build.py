@@ -249,6 +249,9 @@ def main():
     if os.path.exists(J("content", "templates.md")):
         html_, toc = notes_body(open(J("content", "templates.md"), encoding="utf-8").read(), [], "TPL")
         site["templates"] = {"html": html_, "toc": toc}
+    if os.path.exists(J("content", "truefalse.md")):
+        html_, toc = notes_body(open(J("content", "truefalse.md"), encoding="utf-8").read(), [], "TF")
+        site["truefalse"] = {"html": html_, "toc": toc}
     # math → MathML
     if MATH:
         res = subprocess.run(["node", J("build", "render-math.js")], input=json.dumps([{"tex": t, "display": d} for t, d in MATH]),
