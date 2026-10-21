@@ -118,6 +118,12 @@ section.block{display:flex;flex-direction:column;gap:12px}
 .box-formula{border-color:var(--mark);background:var(--mark-soft)}.box-formula .box-k{color:var(--mark-ink)}
 .box-example{border-color:var(--ok);background:var(--ok-soft)}.box-example .box-k{color:var(--ok)}
 .box-tip{border-color:var(--warn);background:var(--warn-soft)}.box-tip .box-k{color:var(--warn)}
+.box-template{border-color:var(--t-rex);border-left-width:4px}.box-template .box-k{color:var(--t-rex)}
+.tpl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.tpl > *,.fgrid > *{min-width:0}
+.box{overflow-x:auto}
+.tpl h2{grid-column:1/-1}
+.tpl > p{grid-column:1/-1}
 .box-r{background:var(--code-bg)}.box-r .box-k{color:var(--t-rex)}
 .box table{background:var(--panel)}
 math{font-size:1.06em}
@@ -198,7 +204,7 @@ pre code{font-family:inherit;background:none}
   .chunk{grid-template-columns:minmax(0,1fr)}
   .chunk-side{border-left:0;border-top:1px dashed var(--line)}
   .concept{grid-template-columns:minmax(0,1fr)}
-  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .fgrid,.tpl{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -402,8 +408,14 @@ function guideHTML(){
   }).join('');
 }
 function formulasHTML(){
+  const T = S.templates;
+  const tpl = T ? `<section class="block" id="templates"><div class="block-h"><h3>Interpretation templates<span class="count">fill in the brackets</span></h3></div>
+      <nav class="toc" aria-label="Template sections">${T.toc.map(t => `<a href="#formulas" data-jump="${t.id}">${t.t}</a>`).join('')}</nav>
+      <div class="prose tpl" style="max-width:none">${T.html}</div></section>` : '';
   return `<header class="head"><div class="eyebrow"><span class="tc-lec">All lectures</span></div><h2>Formula sheet</h2>
-    <p class="lede">Every formula box from the typed notes, grouped by lecture.</p></header>` +
+    <p class="lede">Fill-in-the-blank interpretation templates first, then every formula box from the typed notes, grouped by lecture.</p>
+    <div class="toc"><a href="#formulas" data-jump="templates">Interpretation templates</a><a href="#formulas" data-jump="formulas-list">Formulas by lecture</a></div></header>` + tpl +
+  `<div id="formulas-list"></div>` +
   S.notes.map(l => {
     const fs = S.formulas.filter(f => f.lec === l.id);
     if (!fs.length) return '';
@@ -411,7 +423,6 @@ function formulasHTML(){
       <div class="fgrid prose" style="max-width:none">${fs.map(f => `<div class="box box-formula"><div class="box-h"><span class="box-t">${f.title || 'Formula'}</span></div>${f.html}</div>`).join('')}</div></section>`;
   }).join('');
 }
-
 function render(){
   const raw = location.hash.slice(1);
   let id = raw || 'guide', target = null;
@@ -448,6 +459,7 @@ document.addEventListener('click', async ev => {
   catch(_) { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); c.textContent = 'Selected'; }
   setTimeout(() => c.textContent = 'Copy', 1500);
 });
+document.addEventListener('click', ev => { const j = ev.target.closest('[data-jump]'); if (!j) return; ev.preventDefault(); const t = document.getElementById(j.dataset.jump); if (t) t.scrollIntoView({block:'start'}); });
 window.addEventListener('hashchange', render);
 filterType = recall('s2103.type') || 'all'; filterPart = recall('s2103.part') || 'all';
 if (window.innerWidth <= 860) setMenu(false);

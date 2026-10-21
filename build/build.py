@@ -68,7 +68,7 @@ def split_front(raw):
 def csv(v): return [x.strip() for x in v.split(",") if x.strip()] if isinstance(v, str) else v
 
 # ---------------------------------------------------------------- notes
-BOX_TITLES = {"def": "Definition", "formula": "Formula", "example": "Example", "tip": "Tip", "r": "In R"}
+BOX_TITLES = {"template": "Template", "def": "Definition", "formula": "Formula", "example": "Example", "tip": "Tip", "r": "In R"}
 
 def notes_body(body, formulas, lec_id):
     lines = body.split("\n"); out = []; i = 0
@@ -237,6 +237,10 @@ def main():
                 "lectures": csv(meta.get("lectures", "")), "data": csv(meta.get("data", "")),
                 "topics": csv(meta.get("topics", "")), "summary": render(meta.get("summary", ""), True), "sections": sections,
             })
+    # interpretation templates (shown on the Formula sheet page)
+    if os.path.exists(J("content", "templates.md")):
+        html_, toc = notes_body(open(J("content", "templates.md"), encoding="utf-8").read(), [], "TPL")
+        site["templates"] = {"html": html_, "toc": toc}
     # math → MathML
     if MATH:
         res = subprocess.run(["node", J("build", "render-math.js")], input=json.dumps([{"tex": t, "display": d} for t, d in MATH]),
