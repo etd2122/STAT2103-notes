@@ -165,6 +165,15 @@ pre code{font-family:inherit;background:none}
 .concept ol,.concept ul{margin:0 0 8px;padding-left:20px}
 .concept li{margin:0 0 7px}
 .concept .pit .label{color:var(--warn)}
+.concept .rknow{grid-column:1/-1;border:1px solid var(--line);border-left:3px solid var(--t-rex);border-radius:4px;background:#fff;padding:10px 14px;margin-bottom:10px;font-size:14px;min-width:0}
+.concept .rknow .label{color:var(--t-rex)}
+.rknow dl{margin:0}
+.rk-row{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:6px 0;border-top:1px dashed var(--line)}
+.rk-row:first-child{border-top:0}
+.rk-row dt{margin:0;min-width:0;overflow-wrap:anywhere}
+.rk-row dt code{font-family:var(--mono);font-size:.84em;background:var(--code-bg);padding:1px 4px;border-radius:3px}
+.rk-row dd{margin:0;min-width:0}
+.rknow .paper{margin:8px 0 2px;padding:8px 10px;background:var(--mark-soft);border-radius:4px}
 .concept code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:0 4px;border-radius:3px}
 .chunk.flash{outline:3px solid var(--mark);outline-offset:2px}
 .hljs-keyword,.hljs-built_in,.hljs-literal{color:var(--hl-kw)}
@@ -204,7 +213,7 @@ pre code{font-family:inherit;background:none}
   .chunk{grid-template-columns:minmax(0,1fr)}
   .chunk-side{border-left:0;border-top:1px dashed var(--line)}
   .concept{grid-template-columns:minmax(0,1fr)}
-  .fgrid,.tpl{grid-template-columns:minmax(0,1fr)}
+  .rk-row{grid-template-columns:minmax(0,1fr)}.fgrid,.tpl{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -320,8 +329,9 @@ function headHTML(e, kind, extra){
   </header>`;
 }
 function conceptHTML(b){
-  if (!b.idea && !(b.walk||[]).length && !(b.pitfall||[]).length) return '';
+  if (!b.idea && !(b.walk||[]).length && !(b.pitfall||[]).length && !(b.rknow||[]).length) return '';
   return `<div class="concept">
+    ${(b.rknow||[]).length ? `<div class="rknow"><span class="label">Reading the R code: what you need to know</span><dl>${b.rknow.map(([c, m]) => `<div class="rk-row"><dt>${c}</dt><dd>${m}</dd></div>`).join('')}</dl>${b.paper ? `<p class="paper"><b>Without R (exam):</b> ${b.paper}</p>` : ''}</div>` : ''}
     ${b.idea ? `<div class="idea"><span class="label">The big idea</span><p>${b.idea}</p></div>` : ''}
     ${(b.walk||[]).length ? `<div class="walk"><span class="label">Think it through, step by step</span><ol>${b.walk.map(x => `<li>${x}</li>`).join('')}</ol></div>` : ''}
     ${(b.pitfall||[]).length ? `<div class="pit"><span class="label">Common mistakes</span><ul>${b.pitfall.map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''}

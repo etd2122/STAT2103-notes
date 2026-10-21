@@ -22,6 +22,14 @@ VarX <- sum((x - EX)^2 * p) # var(X) = E[(X - E(X))^2]
 explain:
 - (a) and (b) are the definitions from Sep 14: $E(X) = \sum x\,P(X=x)$ and $\text{var}(X) = \sum (x - E(X))^2 P(X=x)$.
 - (c) $Y - E(Y) = 2(X - E(X))$, so $\text{cov}(X, 2X - 1) = 2\,\text{var}(X)$. The "−1" shifts but doesn't change spread.
+rknow:
+- `x <- c(0, 1, 2, 4)` :: `c()` combines numbers into a **vector**: the list of possible values of X. `<-` stores it under the name `x`.
+- `p <- (x + 2) / 15` :: R does the math to **every** element at once (vectorized), so `p` = 2/15, 3/15, 4/15, 6/15. That's the pmf written as a list.
+- `sum(p)` :: Adds the probabilities. Prints **1**. If not, the pmf is wrong.
+- `sum(x * p)` :: `x * p` multiplies element by element (0·2/15, 1·3/15, …), then `sum` adds them. That's exactly $E(X) = \sum x\,P(X=x)$. Prints **2.333** (= 35/15 = 7/3).
+- `sum((x - EX)^2 * p)` :: Distance from the mean, squared, weighted by probability, added up: the definition of variance. Prints **2.222** (= 20/9).
+- cov(X, 2X − 1) :: No code needed: $2\,\text{var}(X) = 40/9 \approx 4.44$.
+paper: make a table with columns $x$, $p$, $x\cdot p$, $(x - E(X))^2 p$ and add each column. That's all the code is doing.
 idea: A pmf is a complete list of outcomes and their chances. Every summary (mean, variance, covariance) is just a weighted average over that list, where the weights are the probabilities.
 walk:
 - Check that the probabilities add to 1. If they don't, something is mis-copied.
@@ -74,6 +82,13 @@ explain:
 - # stops on a route is Binomial($n$ = # lights, $p = 0.5$).
 - "More than half" of 6 is $\ge 4$, i.e. $P(Y > 3) = 1 - P(Y \le 3)$. For 2 lights it's $P(Y = 2)$.
 - Choose the route with the smaller probability of being late.
+rknow:
+- `pbinom(3, size = 6, prob = 0.5)` :: **p** = cumulative probability, $P(Y \le 3)$ for $Y \sim \text{Bin}(6, 0.5)$. The first number is the cutoff, `size` is n, `prob` is p.
+- `1 - pbinom(3, ...)` :: Flips "≤ 3" into "> 3" (4, 5 or 6 stops). Prints **0.344** (= 22/64).
+- `1 - pbinom(1, size = 2, prob = 0.5)` :: $P(Y > 1) = P(Y = 2)$ on the 2-light route. Prints **0.25**.
+- Conclusion :: 0.25 < 0.344, so take the **2-light route**.
+- `dbinom` vs `pbinom` :: `dbinom(k, n, p)` = $P(Y = k)$ exactly; `pbinom(k, n, p)` = $P(Y \le k)$. "More than k" is always `1 - pbinom(k, ...)`.
+paper: $P(Y = k) = \binom{n}{k}p^k(1-p)^{n-k}$. Route A: $(\binom64 + \binom65 + \binom66)/2^6 = (15+6+1)/64 = 22/64$. Route B: $0.5^2 = 0.25$.
 idea: Each route is a set of independent yes/no events (stop or not), so the number of stops is Binomial. The question is just which route has the smaller chance of "too many" stops.
 walk:
 - Route A: n = 6 lights, p = 0.5. Late if stops > 3, i.e. 4, 5 or 6 stops.
@@ -98,6 +113,16 @@ sd(d)
 explain:
 - (a) Rearrange $\text{var}(M+V) = \text{var}(M) + \text{var}(V) + 2\rho\,\sigma_M\sigma_V$ and solve for $\rho$.
 - (b) $\text{var}(M - V) = \text{var}(M) + \text{var}(V) - 2\rho\sigma_M\sigma_V$. With positive correlation, differences are **less** spread out than you'd get if the sections were independent.
+rknow:
+- `read.csv("scores.csv")` :: Loads the data file as a **data frame** (a table: rows = students, columns = variables). The file has to be in your working directory.
+- `names(scores)` :: Lists the column names, so you know what to type after `$`.
+- `scores$math` :: `$` pulls out **one column** as a vector.
+- `scores$math - scores$verbal` :: Subtracts student by student, giving one difference $d_i$ per student.
+- `hist(d)` :: Histogram of the differences: shows the shape, center and spread.
+- `mean(d)`, `sd(d)` :: Sample mean and sample SD (`sd` divides by n − 1).
+- Part (a) result :: $225 = 100 + 64 + 2\rho(10)(8)$, so $\rho = 61/160 \approx$ **0.38**.
+- What to compare :: The theory says $\text{var}(M - V) = 164 - 2(0.38)(80) = 103$, so SD ≈ **10.1**. That's about the same as SD(M) = 10, and well below $\sqrt{164} \approx 12.8$, which is what you'd get if the sections were independent. Your `sd(d)` should be in that neighborhood.
+paper: you won't be asked to load data, but you can be asked to use $\text{var}(X \pm Y) = \text{var}(X) + \text{var}(Y) \pm 2\rho\,\sigma_X\sigma_Y$ and to solve for ρ.
 idea: The variance of a sum isn't just the sum of variances. The extra piece, 2ρσσ, captures whether the two parts move together. Knowing var(M + V) lets you work backwards to the correlation.
 walk:
 - Write down $\text{var}(M+V) = \text{var}(M) + \text{var}(V) + 2\rho\sigma_M\sigma_V$ and plug in everything you know.
