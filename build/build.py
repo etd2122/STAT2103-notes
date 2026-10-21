@@ -233,6 +233,7 @@ def main():
                               "code": b.get("code", ""), "key": str(b.get("key", "")).lower() == "true"})
             site[key].append({
                 "id": meta["id"], "type": kind, "num": meta["num"], "title": meta["title"], "pdf": meta["pdf"],
+                "solutions": meta.get("solutions", ""),
                 "thumb": "thumbs/" + os.path.basename(meta["pdf"]).replace(".pdf", ".jpg"),
                 "lectures": csv(meta.get("lectures", "")), "data": csv(meta.get("data", "")),
                 "topics": csv(meta.get("topics", "")), "summary": render(meta.get("summary", ""), True), "sections": sections,

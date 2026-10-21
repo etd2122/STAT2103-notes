@@ -3,10 +3,11 @@ id: PE1
 num: 1
 title: Exam 1 practice questions
 pdf: assignments/exam1-practice.pdf
+solutions: assignments/exam1-practice-solutions.pdf
 lectures: L01, L02, L03, L04, L05, L06, L07, L08, L09, L10, L11
 data:
 topics: true/false, variance rules, hypotheses, p-values, one- vs two-sided, regression slope, CI vs PI, interval width, linear transformation, causation, z vs t interval, reading lm output, R-squared, residual plots
-summary: Worked answer key for the Exam 1 practice questions. Each answer comes with the reasoning and the trap the question is testing. Try each question on paper first, then check here.
+summary: Worked answer key for the Exam 1 practice questions, checked against the instructor's official solutions (linked below). Each answer comes with the reasoning and the trap the question is testing. Try each question on paper first, then check here.
 ---
 
 ## Section 1 · True or false
@@ -89,12 +90,13 @@ explain:
 key: true
 question: var(X) = 16, var(Y) = 9. What's the SD of X − Y? (a) 7 (b) 5 (c) 6.5 (d) 25 (e) cannot be determined.
 explain:
-- **(e) cannot be determined.**
-- $\text{var}(X - Y) = \text{var}(X) + \text{var}(Y) - 2\,\text{cov}(X, Y)$. We don't know the covariance.
-- If X and Y were independent, it would be $\sqrt{16+9} = 5$, which is choice (b) and the trap.
+- **(b) 5** (official key).
+- For independent X and Y, variances **add**, even for a difference: $\text{var}(X - Y) = 16 + 9 = 25$, so $\text{sd} = \sqrt{25} = 5$.
+- The key assumes X and Y are independent. In general $\text{var}(X - Y) = \text{var}(X) + \text{var}(Y) - 2\,\text{cov}(X, Y)$, so strictly you'd need the covariance. On the exam, treat X and Y as independent unless told otherwise.
+idea: Subtracting a random variable still **adds** uncertainty. The minus sign gets squared away: $\text{var}(-Y) = (-1)^2\text{var}(Y)$.
 pitfall:
-- Assuming independence when the question doesn't say so.
-- (a) 7 comes from subtracting SDs (4 − 3); SDs never add or subtract.
+- (a) 7 comes from subtracting SDs (4 − 3). Variances add; SDs never add or subtract.
+- (d) 25 is the variance, not the SD.
 
 ### box: 12 · Hypotheses for dissatisfied customers
 question: The ISP says 30% are dissatisfied; we think it's higher. In a sample of 200, 40% are dissatisfied. Hypotheses?
@@ -135,19 +137,21 @@ idea: Regressing X on Y minimizes **horizontal** misses instead of vertical ones
 question: Which is wider: 99% CI for the average Y at X = 5, or 99% PI for an individual Y at X = 5?
 explain:
 - **(b) the prediction interval.** At the same x and the same confidence level, the PI is always wider: it adds the individual scatter σ² on top of the uncertainty about the line.
+- Compare Q17: once the x values differ too, you can no longer say which is wider.
 
 ### box: 17 · CI at X = 11 vs PI at X = 6
 key: true
 question: Which is wider: 95% CI for the average Y at X = 11, or 95% PI for an individual Y at X = 6? (The data run from x ≈ 4 to 8, with x̄ = 6.)
 explain:
-- **(b) the PI at X = 6**, but only just. Compare the parts under the square root (σ̂ and the t-multiplier are the same for both):
-- CI at 11: $\sqrt{\tfrac1n + \tfrac{(11-6)^2}{\sum(x_i-\bar x)^2}}$. PI at 6: $\sqrt{1 + \tfrac1n}$.
-- Reading the plot: about 20 points spread from 4 to 8 gives $\sum(x_i - \bar x)^2 \approx 31$. So the CI factor is $\sqrt{0.05 + 25/31} \approx 0.92$ and the PI factor is $\sqrt{1.05} \approx 1.02$, about 10% wider.
-- The rule: the CI at x* beats the PI only if $(x^* - \bar x)^2 > \sum (x_i - \bar x)^2$.
-idea: Two forces compete. Moving 5 units past x̄ (extrapolating) inflates the CI, but the PI always carries the full individual scatter. Here the scatter still wins, narrowly.
+- **(c) cannot be determined** (official key).
+- The two intervals change in **different** ways, so neither one is automatically wider. Compare the parts under the square root (σ̂ and the multiplier are the same):
+- CI at 11: $\sqrt{\tfrac1n + \tfrac{(11-6)^2}{\sum(x_i-\bar x)^2}}$. It's for an average, which makes it narrower, but 11 is far from $\bar x = 6$, which makes it wider.
+- PI at 6: $\sqrt{1 + \tfrac1n}$. It's at the center, which makes it narrower, but it's for an individual, which makes it wider.
+- Which wins depends on $\sum(x_i - \bar x)^2$, i.e. the exact x values, which you can't get precisely from the plot.
+idea: In Q16 everything else was equal (same x, same level), so the PI had to be wider. Here two things differ at once and pull in opposite directions. When that happens, you can't call it without numbers.
 pitfall:
-- Answering (a) on instinct because x = 11 is extrapolation. It's close, so be ready to justify with the formula.
-- If your instructor's key says (c), the argument is that you'd need the exact x values. Ask which reasoning they expect.
+- Answering (b) because "a PI is always wider." That's only true at the **same** x and the same confidence level.
+- Answering (a) because x = 11 is extrapolation. Extrapolation widens the CI, but not necessarily past a PI.
 
 ## Section 3 · Free response
 
@@ -168,7 +172,11 @@ question: Heavier dogs take longer to be adopted (significant positive slope). T
 explain:
 - **No.** This is an **observational** study, so a significant slope shows association, **not causation**.
 - **Confounding:** weight goes with breed, size, age and energy level. Adopters likely prefer small breeds, not "lighter versions" of large dogs. A 70-lb Lab that slims to 60 lb is still a big dog.
+- **Groups vs individuals:** the slope compares *different* dogs. A trend where smaller dogs get adopted faster doesn't mean that making any one dog lose weight would shorten **its** adoption time.
+- **Context:** a large dog isn't necessarily overweight. Weight loss could hurt its health, which would probably make adoption *harder*.
 - To claim weight loss shortens adoption time, you'd need a **randomized experiment** that changes weight while holding everything else equal.
+pitfall:
+- Arguing about R². A high R² still wouldn't make the relationship causal; the problem is the study design, not the strength of the fit.
 
 ### box: 3 · Pine tree heights: z or t?
 key: true
@@ -203,13 +211,17 @@ pitfall:
 question: Interpret $R^2 = 0.82$.
 explain:
 - **82% of the variation in zinc concentration among these fish is explained by the linear relationship with lead concentration.** The remaining 18% is variation the model doesn't capture.
+pitfall:
+- Leaving out the number. Say "82% of the variation…", not just "R² is the variation…".
 
 ### box: 5 · Reading residual plots
 key: true
 question: (a)/(b) Plot 1 is U-shaped. Which assumptions are violated, and what are the consequences? (c)/(d) Plot 2 shows random scatter. Same questions.
 explain:
-- **Plot 1 → linearity is violated.** The residuals are positive at both ends and negative in the middle: a curve the line can't follow. The spread looks fairly even, so constant variance seems OK.
+- **Plot 1 → linearity is violated** (official key: linearity only). The residuals are positive at both ends and negative in the middle: a curve the line can't follow. The vertical spread is about the same all the way across, so constant variance is **not** flagged.
 - **Consequences:** the estimated coefficients aren't meaningful (there's no true straight line to estimate), CIs and tests are invalid, and predictions can be poor. Remedy: transform x and/or y.
 - **Plot 2 → no apparent violations.** Points are scattered evenly around 0 with similar spread at every x, and there's no pattern.
 - **Consequences:** none. The estimates are valid and the usual CIs and tests can be used. (Normality would need a histogram or Q-Q plot to check, and independence only matters for ordered data; this plot can't show either.)
+pitfall:
+- Calling a curve "non-constant variance." A U-shape changes where the residuals are **centered**; a fan changes how **spread out** they are.
 idea: Read residual plots for two things. **Shape** (any curve means linearity fails) and **spread** (a fan means non-constant variance). Pure random noise is what you want.
