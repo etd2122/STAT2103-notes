@@ -134,6 +134,35 @@ $$R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat y_i)^2}{\sum_{i=1}^n (y_i - \bar y)^2
 
 If every data point fell exactly on a line, all residuals $y_i - \hat y_i$ would be 0, giving $R^2 = 1 - 0 = 1$: the model explains all the variation in $y$.
 
+:::formula Sums of squares: SST, SSR, SSE
+| Name | Formula | What it measures |
+|---|---|---|
+| **SST**, total sum of squares (also written TSS) | $\displaystyle \text{SST} = \sum_{i=1}^n (y_i - \bar y)^2$ | total variation in $y$ **before** fitting anything (distance from each point to the mean) |
+| **SSR**, regression sum of squares | $\displaystyle \text{SSR} = \sum_{i=1}^n (\hat y_i - \bar y)^2$ | variation **explained** by the line (distance from the line to the mean) |
+| **SSE**, error / residual sum of squares | $\displaystyle \text{SSE} = \sum_{i=1}^n (y_i - \hat y_i)^2 = \sum_{i=1}^n \hat e_i^{\,2}$ | variation **left over** (distance from each point to the line) |
+
+The total splits into explained + unexplained:
+$$\text{SST} = \text{SSR} + \text{SSE}$$
+So
+$$R^2 = \frac{\text{SSR}}{\text{SST}} = 1 - \frac{\text{SSE}}{\text{SST}}, \qquad \hat\sigma^2 = \frac{\text{SSE}}{n-2}$$
+:::
+
+:::tip Watch the abbreviations
+Some books and software use **SSR** (or **RSS**) for the **residual** sum of squares, the same thing as SSE above. Before plugging into a formula, check whether "SSR" means *regression* (explained) or *residual* (left over). A quick test: the explained part should get **bigger** as the fit improves; the residual part should get **smaller**.
+:::
+
+:::r Sums of squares in R
+```r
+fit  <- lm(y ~ x)
+SST  <- sum((y - mean(y))^2)
+SSE  <- sum(fit$residuals^2)
+SSR  <- sum((fit$fitted.values - mean(y))^2)
+SSR + SSE                  # equals SST
+SSR / SST                  # R-squared
+summary(fit)$r.squared     # same number
+```
+:::
+
 ## Why might $R^2$ be small?
 
 A small $R^2$ means the linear model isn't very successful at predicting $y$. Two possible reasons:
