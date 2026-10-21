@@ -38,6 +38,38 @@ $$E(aX) = aE(X), \qquad E(X+b) = E(X)+b, \qquad E(X+Y) = E(X)+E(Y) \;\text{(alwa
 
 SAT example again: positively correlated sections ⇒ total scores more spread out; negatively correlated ⇒ less spread out (above average on one tends to be offset by below average on the other).
 
+:::formula Variance and SD cheat sheet
+$a, b, c, d$ are constants; $\sigma_X = \text{sd}(X) = \sqrt{\text{var}(X)}$.
+
+| Situation | Variance | Standard deviation |
+|---|---|---|
+| Add a constant | $\text{var}(X + b) = \text{var}(X)$ | $\text{sd}(X + b) = \sigma_X$ |
+| Multiply by a constant | $\text{var}(aX) = a^2\,\text{var}(X)$ | $\text{sd}(aX) = \lvert a\rvert\,\sigma_X$ |
+| Linear transformation | $\text{var}(aX + b) = a^2\,\text{var}(X)$ | $\text{sd}(aX + b) = \lvert a\rvert\,\sigma_X$ |
+| A constant | $\text{var}(b) = 0$ | $0$ |
+| Sum, **independent** | $\text{var}(X+Y) = \sigma_X^2 + \sigma_Y^2$ | $\sqrt{\sigma_X^2 + \sigma_Y^2}$ |
+| Difference, **independent** | $\text{var}(X-Y) = \sigma_X^2 + \sigma_Y^2$ (still **+**) | $\sqrt{\sigma_X^2 + \sigma_Y^2}$ |
+| Sum, correlated | $\sigma_X^2 + \sigma_Y^2 + 2\,\text{cov}(X,Y)$ | $\sqrt{\sigma_X^2 + \sigma_Y^2 + 2\rho\sigma_X\sigma_Y}$ |
+| Difference, correlated | $\sigma_X^2 + \sigma_Y^2 - 2\,\text{cov}(X,Y)$ | $\sqrt{\sigma_X^2 + \sigma_Y^2 - 2\rho\sigma_X\sigma_Y}$ |
+| General | $\text{var}(aX + bY) = a^2\sigma_X^2 + b^2\sigma_Y^2 + 2ab\,\text{cov}(X,Y)$ | square root of that |
+| Sum of $n$ iid copies | $\text{var}(X_1+\dots+X_n) = n\sigma^2$ | $\sqrt n\,\sigma$ |
+| Mean of $n$ iid | $\text{var}(\bar X) = \sigma^2/n$ | $\sigma/\sqrt n$ |
+| Binomial$(n,p)$ | $np(1-p)$ | $\sqrt{np(1-p)}$ |
+| Sample proportion $\hat p$ | $p(1-p)/n$ | $\sqrt{p(1-p)/n}$ |
+
+**Covariance rules:** $\text{cov}(X, Y) = \rho_{XY}\sigma_X\sigma_Y$; $\text{cov}(X, X) = \text{var}(X)$; $\text{cov}(aX + b,\, cY + d) = ac\,\text{cov}(X, Y)$; independent ⇒ $\text{cov}(X, Y) = 0$.
+
+**Sample versions:** $S^2 = \frac{1}{n-1}\sum (x_i - \bar x)^2$ (`var(x)`) and $S = \sqrt{S^2}$ (`sd(x)`).
+:::
+
+:::tip Variance traps
+- **SDs never add.** To combine, convert to variances, add, then take the square root. With independent SDs 4 and 3, the SD of the sum is $\sqrt{16 + 9} = 5$, not 7.
+- **Differences still add variances** (when independent): subtracting doesn't cancel randomness.
+- **Constants:** adding one changes the mean, not the spread. Multiplying scales the SD by $\lvert a\rvert$ and the variance by $a^2$.
+- **n copies vs. one thing times n:** $X_1 + \dots + X_7$ (7 independent days) has variance $7\sigma^2$, but $7X$ (one day times 7) has variance $49\sigma^2$.
+- If the question doesn't say independent and gives no covariance or correlation, $\text{var}(X \pm Y)$ **can't be determined**.
+:::
+
 ## The Bernoulli distribution
 
 :::def Bernoulli($p$)
