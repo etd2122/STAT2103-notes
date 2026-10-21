@@ -67,7 +67,7 @@ $a, b, c, d$ are constants; $\sigma_X = \text{sd}(X) = \sqrt{\text{var}(X)}$.
 - **Differences still add variances** (when independent): subtracting doesn't cancel randomness.
 - **Constants:** adding one changes the mean, not the spread. Multiplying scales the SD by $\lvert a\rvert$ and the variance by $a^2$.
 - **n copies vs. one thing times n:** $X_1 + \dots + X_7$ (7 independent days) has variance $7\sigma^2$, but $7X$ (one day times 7) has variance $49\sigma^2$.
-- If the question doesn't say independent and gives no covariance or correlation, $\text{var}(X \pm Y)$ **can't be determined**.
+- **No covariance or correlation given?** The practice-exam key (Q11) treats X and Y as independent: var(X) = 16 and var(Y) = 9 give $\text{sd}(X - Y) = \sqrt{25} = 5$. Strictly, the general formula needs $\text{cov}(X, Y)$, but on this exam assume independence unless told otherwise.
 :::
 
 ## The Bernoulli distribution

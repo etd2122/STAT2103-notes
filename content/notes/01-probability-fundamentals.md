@@ -166,6 +166,28 @@ $$\text{cov}(X,Y) = E\big[(X - E(X))(Y - E(Y))\big] = \sum_{\text{all }(x,y)} (x
 
 - If $X$ and $Y$ are **independent**, $\text{cov}(X,Y) = 0$ exactly.
 
+:::formula Covariance: five ways to compute it
+1. **Definition:** $\text{cov}(X,Y) = E\big[(X - E(X))(Y - E(Y))\big]$
+   *Use with a joint table:* multiply the two deviations in each cell by that cell's probability, then add.
+2. **Shortcut:** $\text{cov}(X,Y) = E(XY) - E(X)\,E(Y)$, where $E(XY) = \sum x\,y\,P(X=x, Y=y)$.
+   *Usually the fastest by hand.*
+3. **Linear rule:** $\text{cov}(aX + b,\; cY + d) = ac\,\text{cov}(X,Y)$, so $\text{cov}(X,\, aX + b) = a\,\text{var}(X)$.
+   *Use when Y is a linear function of X,* like $Y = 2X - 1$ (HW 1 #1c). Added constants don't matter.
+4. **From correlation:** $\text{cov}(X,Y) = \rho_{XY}\,\sigma_X\,\sigma_Y$.
+   *Use when you're given ρ and the SDs.*
+5. **From a variance of a sum:** $\text{cov}(X,Y) = \dfrac{\text{var}(X+Y) - \text{var}(X) - \text{var}(Y)}{2}$.
+   *Use when you're given var(X + Y),* like the GRE problem (HW 1 #5a).
+
+Shortcut 2 is the covariance version of $\text{var}(X) = E(X^2) - (E(X))^2$. In fact $\text{cov}(X, X) = \text{var}(X)$.
+:::
+
+:::example Same answer three ways (HW 1 #1c)
+$P(X = x) = \frac{x+2}{15}$ for $x = 0, 1, 2, 4$, with $E(X) = 7/3$ and $\text{var}(X) = 20/9$. Let $Y = 2X - 1$, so $E(Y) = 11/3$.
+- **Linear rule (3):** $\text{cov}(X, 2X - 1) = 2\,\text{var}(X) = 2 \cdot \frac{20}{9} = \frac{40}{9}$.
+- **Shortcut (2):** $E(XY) = E(2X^2 - X) = 2\cdot\frac{115}{15} - \frac{35}{15} = 13$, so $\text{cov} = 13 - \frac73\cdot\frac{11}{3} = \frac{117 - 77}{9} = \frac{40}{9}$.
+- **Definition (1):** $Y - E(Y) = 2(X - E(X))$, so $E[(X - E(X)) \cdot 2(X - E(X))] = 2\,\text{var}(X) = \frac{40}{9}$.
+:::
+
 :::formula Correlation
 $$\rho_{XY} = \text{cor}(X,Y) = \frac{\text{cov}(X,Y)}{\sigma_X\,\sigma_Y}, \qquad -1 \le \rho_{XY} \le 1$$
 Correlation is covariance rescaled to the range $[-1, 1]$.
