@@ -221,7 +221,12 @@ def main():
         if not os.path.isdir(J("content", folder)): continue
         for fn in sorted(os.listdir(J("content", folder))):
             meta, body = split_front(open(J("content", folder, fn), encoding="utf-8").read())
-            wrap_html = ""
+            wrap_html = ""; intro_html = ""
+            if "=== big picture ===" in body and "=== problems ===" in body:
+                pre, rest = body.split("=== big picture ===", 1)
+                intro_md, rest = rest.split("=== problems ===", 1)
+                body = pre + rest
+                intro_html, _ = notes_body(intro_md, [], meta["id"])
             if "\n=== wrap-up ===" in body:
                 body, wrap_md = body.split("\n=== wrap-up ===", 1)
                 wrap_html, _ = notes_body(wrap_md, [], meta["id"])
@@ -240,7 +245,7 @@ def main():
             site[key].append({
                 "id": meta["id"], "type": kind, "num": meta["num"], "title": meta["title"], "pdf": meta["pdf"],
                 "solutions": meta.get("solutions", ""),
-                "wrap": wrap_html,
+                "wrap": wrap_html, "intro": intro_html,
                 "thumb": "thumbs/" + os.path.basename(meta["pdf"]).replace(".pdf", ".jpg"),
                 "lectures": csv(meta.get("lectures", "")), "data": csv(meta.get("data", "")),
                 "topics": csv(meta.get("topics", "")), "summary": render(meta.get("summary", ""), True), "sections": sections,

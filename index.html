@@ -107,6 +107,7 @@ section.block{display:flex;flex-direction:column;gap:12px}
 .prose li{margin:3px 0}
 .prose code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
 .prose blockquote{margin:0 0 12px;padding:8px 14px;border-left:3px solid var(--line);color:var(--muted)}
+.prose img{max-width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:6px;margin:6px 0 14px;background:#fff}
 .prose table{border-collapse:collapse;font-size:14px;margin:0 0 14px;display:block;overflow-x:auto;max-width:100%}
 .prose th,.prose td{border:1px solid var(--line);padding:5px 10px;text-align:left;vertical-align:top}
 .prose th{background:var(--code-bg);font-weight:600}
@@ -278,7 +279,7 @@ const ALL = [...S.notes, ...S.examples, ...S.homework, ...(S.practice||[])];
 ALL.forEach(e => {
   e._part = partOf(e);
   const boxes = (e.sections || []).flatMap(s => s.boxes);
-  e._hay = [e.id, e.title, (e.topics||[]).join(' '), strip(e.summary), strip(e.html), strip(e.wrap), (e.takeaways||[]).map(strip).join(' '),
+  e._hay = [e.id, e.title, (e.topics||[]).join(' '), strip(e.summary), strip(e.html), strip(e.wrap), strip(e.intro), (e.takeaways||[]).map(strip).join(' '),
     ...boxes.map(b => strip(b.title) + ' ' + strip(b.what) + ' ' + strip(b.question) + ' ' + (b.code||'') + ' ' + (b.explain||[]).map(strip).join(' '))].join(' ').toLowerCase();
 });
 const hwFor = lecId => S.homework.filter(h => (h.lectures||[]).includes(lecId));
@@ -407,7 +408,7 @@ function homeworkHTML(e){
         ? `<a class="rel" href="datasets/${esc(d)}" download><b class="tc-hw">CSV</b>${esc(d)}</a>`
         : `<span class="rel" title="Not uploaded yet"><b>CSV</b>${esc(d)} · not uploaded</span>`).join('') || 'none'}</div>`}
      <div class="related">${prac ? 'Covers' : 'Use'} ${[...lecs, ...exs].map(relLink).join('')}</div>
-   </section>` + sectionsHTML(e, true) +
+   </section>` + (e.intro ? `<section class="block bigpic" id="${e.id}-big"><div class="prose" style="max-width:none">${e.intro}</div></section>` : '') + sectionsHTML(e, true) +
   (e.wrap ? `<section class="block wrapup" id="${e.id}-wrap"><div class="block-h"><h3>Wrap-up</h3><span class="count">formulas · summary · R takeaways · mistakes</span></div><div class="prose">${e.wrap}</div></section>` : '');
 }
 function guideHTML(){

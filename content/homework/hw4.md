@@ -9,6 +9,72 @@ topics: least squares, interpretation, units, prediction, extrapolation, line th
 summary: A full regression of hurricane wind speed on central pressure (fit, plot, interpret, predict, extrapolate, residual), then three picture questions about which sample gives a more precise slope.
 ---
 
+=== big picture ===
+## Problem 1: the big picture
+
+Problem 1 has ten parts, but it asks **one question**: *how does a hurricane's wind speed relate to its central pressure?* Every part is one step in the same story. You **build** a summary of 62 storms, **read** what it says, **use** it, then check **what it can and can't tell you**.
+
+[![Every part of Problem 1 marked on the hurricane scatter plot: the least squares line, the center point, a one-SD step, Harvey's residual, the 945 mb prediction and the 750 mb extrapolation](img/homework/hw4-problem1-concept.png)](img/homework/hw4-problem1-concept.png)
+
+*Tap or click the picture to open it full size.*
+
+:::def The one idea behind everything
+The regression line is a model for **averages**: $E(\text{wind} \mid \text{pressure}) = \beta_0 + \beta_1 \cdot \text{pressure}$. It doesn't describe any single storm. It describes the **typical** storm at each pressure. Every part of Problem 1 either builds that line, reads it, uses it, or measures how real storms differ from it.
+:::
+
+### 1 · Build the summary (a–b)
+
+A scatter plot of 62 storms is a cloud. Least squares replaces the cloud with **one straight line**: the one whose **vertical** misses, squared and added up, are as small as possible. The misses are vertical because the job is to predict **wind** (y) from pressure (x), so a miss is measured in knots.
+
+*Why it matters:* you can't interpret, predict or do inference until you've decided a straight line is a sensible summary, so look at the plot first.
+
+### 2 · Read the summary (c–d)
+
+- **The slope is a comparison between storms, not a change within one storm.** Storms whose pressures differ by 1 mb have max winds that differ by about 0.9 knots on average, with the lower-pressure storm faster. Nobody turned a dial on one hurricane, so this is observational data and the wording is "differ by," not "causes."
+- **Units carry the meaning.** The slope is in knots per mb (how much y changes per unit of x); the intercept is in knots.
+- **The intercept is an anchor, not a fact about storms.** It's the line's height at 0 mb, a pressure no storm has ever had. It's there to place the line, not to be interpreted.
+
+### 3 · Use the summary (e–f)
+
+A prediction is the line's answer to "what's the **average** wind for storms like this?" The line only earned that right **where it saw data** (919–993 mb).
+
+- 945 mb is inside the data: an **interpolation** you can trust as much as the line itself.
+- 750 mb is far outside it. R still prints 282 knots, but nothing tells us the straight-line pattern continues out there. That's **extrapolation**: the math works; the evidence doesn't.
+
+### 4 · Find where the line is anchored (g)
+
+The line always passes through the **center of the data**, $(\bar x, \bar y)$. It's built into the intercept formula, $\hat\beta_0 = \bar y - \hat\beta_1 \bar x$. Think of the line as a **seesaw pivoting at the center**: the slope sets the tilt, and the pivot never moves. That's also why predictions are most reliable near $\bar x$ and get shakier farther out.
+
+### 5 · How hard x "pulls" y (h–i)
+
+Move one standard deviation in pressure (18.7 mb). The line predicts wind changes by $\hat\beta_1 s_x = r\,s_y \approx 17$ knots, **less** than one SD of wind (20.3 knots), because $\lvert r\rvert = 0.84 < 1$.
+
+This is **regression to the mean**. An extreme storm (in pressure) is predicted to be extreme in wind, but **less** extreme, because pressure doesn't explain everything about wind. Only if every point sat exactly on the line ($\lvert r\rvert = 1$) would 1 SD in x predict a full 1 SD in y. The weaker the relationship, the more the predictions hug $\bar y$.
+
+### 6 · What the line misses (j)
+
+A **residual** is one storm's "surprise": observed − predicted. Harvey (937 mb) actually hit 115 knots; the line expected 112.6 for a typical 937-mb storm, so Harvey's residual is **+2.4 knots**, a little stronger than typical.
+
+Residuals are the part of each storm that pressure **doesn't** explain. Their typical size ($\hat\sigma$) measures how good the summary is. Their **patterns** (Oct 19) tell you whether a straight line was the right summary at all.
+
+### The whole problem in one table
+
+| Part | The question it really asks | The idea |
+|---|---|---|
+| (a–b) | What's the best straight-line summary? | Least squares: minimize squared vertical misses |
+| (c–d) | What does the line say? | Slope = average difference between groups of storms; units; intercept is just an anchor |
+| (e) | What does it predict inside the data? | A prediction is an **average** for storms like that |
+| (f) | Can it predict far outside the data? | No evidence there: **extrapolation** |
+| (g) | Where is the line pinned? | Always through $(\bar x, \bar y)$ |
+| (h–i) | How strongly does x move y? | $\hat\beta_1 s_x = r s_y$: **regression to the mean** |
+| (j) | How does one real storm compare? | Residual = observed − predicted |
+
+:::tip If you remember one sentence
+"The regression line describes how the **average** y differs across x, **within the range of the data**. Individual points scatter around it, and how much they scatter is how much x leaves unexplained."
+:::
+
+=== problems ===
+
 ### box: Problem 1(a)–(b) · Fit and plot
 question: hurricanes.csv: `pressure` (mb) as X, `windspeed` (knots) as Y, 62 storms. Find the least squares line and plot it on the scatter plot.
 code:
