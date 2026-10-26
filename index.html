@@ -478,9 +478,9 @@ function formulasHTML(){
 }
 
 // ---------- quiz
-let QZ = {}; try { QZ = JSON.parse(recall('s2103.quiz') || '{}') || {}; } catch(_) { QZ = {}; }
+let QZ = {}; try { QZ = JSON.parse(recall('s2103.quiz.pe') || '{}') || {}; } catch(_) { QZ = {}; }
 let qTopic = 'all', qType = 'all', qStar = false, qMissed = false, qOrder = null;
-const saveQZ = () => store('s2103.quiz', JSON.stringify(QZ));
+const saveQZ = () => store('s2103.quiz.pe', JSON.stringify(QZ));
 function quizList(){
   let qs = (S.quiz || []).filter(q => (qTopic === 'all' || q.topic === qTopic) && (qType === 'all' || (qType === 'tf' ? q.type === 'tf' : q.type !== 'tf'))
     && (!qStar || q.star) && (!qMissed || QZ[q.id] === 'wrong'));
@@ -507,8 +507,8 @@ function quizHTML(){
   const topics = [...new Set((S.quiz || []).map(q => q.topic))];
   const st = quizStats(); const list = quizList();
   const chip = (attr, val, cur, label) => `<button type="button" class="chip" data-${attr}="${val}" aria-pressed="${cur === val}">${label}</button>`;
-  return `<header class="head"><div class="eyebrow"><span class="tc-lec">All lectures · HW 1–5 · practice exam</span></div><h2>Quiz</h2>
-    <p class="lede">${(S.quiz||[]).length} concept checks: true/false, multiple choice and quick problems you can do in your head or on scrap paper. Tap an answer to see why. ★ marks the harder ones. Your progress is saved on this device.</p></header>
+  return `<header class="head"><div class="eyebrow"><span class="tc-lec">Practice exams · PE1 · 1B · 1C</span></div><h2>Quiz</h2>
+    <p class="lede">${(S.quiz||[]).length} true/false questions from the practice exams (PE1, 1B and 1C). Tap an answer to see why. ★ marks the harder ones. Your progress is saved on this device.</p></header>
     <section class="block qbar">
       <div class="q-score"><div><b>${st.r}</b> correct of <b>${st.a}</b> answered${st.a ? ` · ${Math.round(100 * st.r / st.a)}%` : ''}</div><div class="q-meter"><span style="width:${st.n ? 100 * st.a / st.n : 0}%"></span></div><div class="q-sub">${st.a} of ${st.n} done</div></div>
       <label class="q-sel">Topic <select id="qTopic"><option value="all">All topics</option>${topics.map(t => `<option value="${esc(t)}"${qTopic === t ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
