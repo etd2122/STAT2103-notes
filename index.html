@@ -40,7 +40,7 @@ a{color:var(--accent)}
 .brand .code{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.04em}
 .brand h1{font-family:var(--display);font-size:22px;line-height:1.15;margin:0;font-weight:700;text-wrap:balance}
 .brand .sub{color:var(--muted);font-size:13px}
-.side-actions{display:flex;gap:8px}
+.side-actions{display:flex;gap:8px;flex-wrap:wrap}
 .btn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:7px 12px;cursor:pointer;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;text-decoration:none;color:var(--ink)}
 .btn:hover{border-color:var(--accent)}
 .btn.sm{padding:4px 9px;font-size:13px}
@@ -132,6 +132,28 @@ section.block{display:flex;flex-direction:column;gap:12px}
 .tf-btn{font:inherit;font-size:13px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer}
 .tf-btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .tf li i{color:var(--muted);font-size:12px;font-style:normal;font-family:var(--mono)}
+.qbar{display:grid;gap:12px}
+.q-score{font-size:15px}.q-meter{height:8px;background:var(--code-bg);border-radius:99px;overflow:hidden;margin:6px 0 2px}.q-meter span{display:block;height:100%;background:var(--ok)}
+.q-sub{font-size:12px;color:var(--muted)}
+.q-sel{font-size:14px;display:flex;gap:8px;align-items:center}.q-sel select{font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#fff;max-width:100%;min-width:0;flex:1}
+.q-actions{display:flex;gap:8px;flex-wrap:wrap}
+.qlist{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.qcard{border:1px solid var(--line);border-left:4px solid var(--line);border-radius:8px;background:#fff;padding:14px 16px}
+.qcard.right{border-left-color:var(--ok)}.qcard.wrong{border-left-color:#b3261e}
+.q-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:6px}
+.q-tag{font-family:var(--mono);color:var(--accent)}.q-kind{color:var(--muted)}.q-star{color:var(--warn);font-weight:600}
+.q-res{margin-left:auto;font-weight:700}.right .q-res{color:var(--ok)}.wrong .q-res{color:#b3261e}
+.q-q{font-size:16px;margin:0 0 12px;line-height:1.5}
+.q-opts{display:flex;gap:10px;flex-wrap:wrap}.q-col{flex-direction:column}
+.q-opt{font:inherit;font-size:15px;padding:11px 18px;min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer;text-align:left;color:var(--ink);flex:1 1 120px}
+.q-col .q-opt{flex:none}
+.q-opt:disabled{cursor:default;opacity:.55}.q-opt.is-key{opacity:1;background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:600}
+.q-opt.q-ok{background:var(--ok-soft);border-color:var(--ok)}.q-opt.q-no{background:#fbe4e1;border-color:#e3a39c}
+.q-ans{margin:12px 0 4px;font-size:15px}.wrong .q-ans b{color:#b3261e}.right .q-ans b{color:var(--ok)}
+.q-why{margin:6px 0 0;padding:10px 12px;background:var(--code-bg);border-radius:6px;font-size:14.5px;line-height:1.5}
+.q-again{margin-top:10px;font:inherit;font-size:13px;background:none;border:0;color:var(--accent);cursor:pointer;padding:4px 0;text-decoration:underline}
+.q-empty{color:var(--muted)}
+.q-chips .chip{padding:7px 12px;font-size:14px}
 .box-template{border-color:var(--t-rex);border-left-width:4px}.box-template .box-k{color:var(--t-rex)}
 .tpl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
 .tpl > *,.fgrid > *{min-width:0}
@@ -243,6 +265,7 @@ pre code{font-family:inherit;background:none}
     <div class="side-actions">
       <a class="btn" id="btnGuide" href="#guide" aria-pressed="false">Study guide</a>
       <a class="btn" id="btnFormulas" href="#formulas" aria-pressed="false">Formula sheet</a>
+      <a class="btn" id="btnQuiz" href="#quiz" aria-pressed="false">Quiz</a>
       <button class="btn menu-btn" id="btnMenu" type="button" aria-expanded="false">List</button>
     </div>
     <div class="collapsible side-body">
@@ -326,6 +349,7 @@ function renderSide(){
   const h = location.hash.slice(1) || 'guide';
   $('#btnGuide').setAttribute('aria-pressed', h === 'guide');
   $('#btnFormulas').setAttribute('aria-pressed', h === 'formulas');
+  $('#btnQuiz').setAttribute('aria-pressed', h === 'quiz');
 }
 
 // ---------- pieces
@@ -452,6 +476,70 @@ function formulasHTML(){
       <div class="fgrid prose" style="max-width:none">${fs.map(f => `<div class="box box-formula"><div class="box-h"><span class="box-t">${f.title || 'Formula'}</span></div>${f.html}</div>`).join('')}</div></section>`;
   }).join('');
 }
+
+// ---------- quiz
+let QZ = {}; try { QZ = JSON.parse(recall('s2103.quiz') || '{}') || {}; } catch(_) { QZ = {}; }
+let qTopic = 'all', qType = 'all', qStar = false, qMissed = false, qOrder = null;
+const saveQZ = () => store('s2103.quiz', JSON.stringify(QZ));
+function quizList(){
+  let qs = (S.quiz || []).filter(q => (qTopic === 'all' || q.topic === qTopic) && (qType === 'all' || (qType === 'tf' ? q.type === 'tf' : q.type !== 'tf'))
+    && (!qStar || q.star) && (!qMissed || QZ[q.id] === 'wrong'));
+  if (qOrder) qs = qs.slice().sort((a, b) => qOrder[a.id] - qOrder[b.id]);
+  return qs;
+}
+function quizCard(q){
+  const st = QZ[q.id]; const done = !!st;
+  let ctl = '';
+  if (q.type === 'tf') ctl = `<div class="q-opts">${['T','F'].map(k => `<button type="button" class="q-opt${done && q.key === k ? ' is-key' : ''}${done && st === 'wrong' && q.key !== k ? ' is-miss' : ''}" data-qa="${q.id}" data-pick="${k}" ${done ? 'disabled' : ''}>${k === 'T' ? 'True' : 'False'}</button>`).join('')}</div>`;
+  else if (q.type === 'mc') ctl = `<div class="q-opts q-col">${q.choices.map(([k, c]) => `<button type="button" class="q-opt${done && q.key === k ? ' is-key' : ''}" data-qa="${q.id}" data-pick="${k}" ${done ? 'disabled' : ''}><b>${k.toLowerCase()})</b> ${c}</button>`).join('')}</div>`;
+  else ctl = done ? '' : `<div class="q-opts"><button type="button" class="q-opt q-show" data-qa="${q.id}" data-pick="show">Show answer</button></div>`;
+  const revealed = done || q._show;
+  const ans = q.type === 'num' && revealed ? `<p class="q-ans"><b>Answer:</b> ${q.answer}</p>` : q.type === 'tf' && done ? `<p class="q-ans"><b>${q.key === 'T' ? 'TRUE' : 'FALSE'}.</b></p>` : q.type === 'mc' && done ? `<p class="q-ans"><b>Answer: ${q.key.toLowerCase()})</b></p>` : '';
+  const self = q.type === 'num' && q._show && !done ? `<div class="q-opts"><button type="button" class="q-opt q-ok" data-qa="${q.id}" data-pick="got">I got it ✓</button><button type="button" class="q-opt q-no" data-qa="${q.id}" data-pick="missed">I missed it ✗</button></div>` : '';
+  return `<article class="qcard${st ? ' ' + st : ''}" id="${q.id}">
+    <div class="q-top"><span class="q-tag">${esc(q.topic.split(' · ')[1] || '')}</span><span class="q-kind">${q.type === 'tf' ? 'True or false' : q.type === 'mc' ? 'Multiple choice' : 'Quick problem'}</span>${q.star ? '<span class="q-star">★ challenge</span>' : ''}${st ? `<span class="q-res">${st === 'right' ? 'Correct' : 'Missed'}</span>` : ''}</div>
+    <p class="q-q">${q.q}</p>${ctl}${ans}${revealed ? `<p class="q-why">${q.why}</p>` : ''}${self}
+    ${done ? `<button type="button" class="q-again" data-qa="${q.id}" data-pick="again">Try again</button>` : ''}
+  </article>`;
+}
+function quizStats(){ const all = S.quiz || []; const a = all.filter(q => QZ[q.id]); const r = a.filter(q => QZ[q.id] === 'right'); return {n: all.length, a: a.length, r: r.length}; }
+function quizHTML(){
+  const topics = [...new Set((S.quiz || []).map(q => q.topic))];
+  const st = quizStats(); const list = quizList();
+  const chip = (attr, val, cur, label) => `<button type="button" class="chip" data-${attr}="${val}" aria-pressed="${cur === val}">${label}</button>`;
+  return `<header class="head"><div class="eyebrow"><span class="tc-lec">All lectures · HW 1–5 · practice exam</span></div><h2>Quiz</h2>
+    <p class="lede">${(S.quiz||[]).length} concept checks: true/false, multiple choice and quick problems you can do in your head or on scrap paper. Tap an answer to see why. ★ marks the harder ones. Your progress is saved on this device.</p></header>
+    <section class="block qbar">
+      <div class="q-score"><div><b>${st.r}</b> correct of <b>${st.a}</b> answered${st.a ? ` · ${Math.round(100 * st.r / st.a)}%` : ''}</div><div class="q-meter"><span style="width:${st.n ? 100 * st.a / st.n : 0}%"></span></div><div class="q-sub">${st.a} of ${st.n} done</div></div>
+      <label class="q-sel">Topic <select id="qTopic"><option value="all">All topics</option>${topics.map(t => `<option value="${esc(t)}"${qTopic === t ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
+      <div class="chips q-chips">${chip('qtype','all',qType,'All types')}${chip('qtype','tf',qType,'True/false')}${chip('qtype','prob',qType,'Problems')}
+        <button type="button" class="chip" data-qflag="star" aria-pressed="${qStar}">★ only</button><button type="button" class="chip" data-qflag="missed" aria-pressed="${qMissed}">Missed only</button></div>
+      <div class="q-actions"><button type="button" class="btn" data-qcmd="shuffle">${qOrder ? 'Reshuffle' : 'Shuffle'}</button>${qOrder ? '<button type="button" class="btn" data-qcmd="order">In order</button>' : ''}<button type="button" class="btn" data-qcmd="reset">Clear my answers</button></div>
+    </section>
+    <div class="qlist">${list.length ? list.map(quizCard).join('') : '<p class="q-empty">No questions match these filters.</p>'}</div>`;
+}
+function quizRefresh(keepId){
+  const y = window.scrollY; $('#main').innerHTML = `<div class="wrap">${quizHTML()}</div>`; window.scrollTo(0, y);
+}
+document.addEventListener('change', ev => { if (ev.target.id === 'qTopic'){ qTopic = ev.target.value; quizRefresh(); } });
+document.addEventListener('click', ev => {
+  const c = ev.target.closest('[data-qtype],[data-qflag],[data-qcmd],[data-qa]'); if (!c || !$('.qlist')) return;
+  if (c.dataset.qtype){ qType = c.dataset.qtype; return quizRefresh(); }
+  if (c.dataset.qflag){ if (c.dataset.qflag === 'star') qStar = !qStar; else qMissed = !qMissed; return quizRefresh(); }
+  if (c.dataset.qcmd === 'shuffle'){ qOrder = {}; (S.quiz||[]).forEach(q => qOrder[q.id] = Math.random()); return quizRefresh(); }
+  if (c.dataset.qcmd === 'order'){ qOrder = null; return quizRefresh(); }
+  if (c.dataset.qcmd === 'reset'){ QZ = {}; saveQZ(); (S.quiz||[]).forEach(q => q._show = false); return quizRefresh(); }
+  const q = (S.quiz||[]).find(x => x.id === c.dataset.qa); if (!q) return;
+  const pick = c.dataset.pick;
+  if (pick === 'show') q._show = true;
+  else if (pick === 'got') QZ[q.id] = 'right';
+  else if (pick === 'missed') QZ[q.id] = 'wrong';
+  else if (pick === 'again'){ delete QZ[q.id]; q._show = false; }
+  else QZ[q.id] = pick === q.key ? 'right' : 'wrong';
+  saveQZ();
+  const el = document.getElementById(q.id); if (el) el.outerHTML = quizCard(q);
+  const sc = $('.q-score'); if (sc){ const st = quizStats(); sc.innerHTML = `<div><b>${st.r}</b> correct of <b>${st.a}</b> answered${st.a ? ` · ${Math.round(100 * st.r / st.a)}%` : ''}</div><div class="q-meter"><span style="width:${100 * st.a / st.n}%"></span></div><div class="q-sub">${st.a} of ${st.n} done</div>`; }
+});
 function render(){
   const raw = location.hash.slice(1);
   let id = raw || 'guide', target = null;
@@ -460,6 +548,7 @@ function render(){
   let html;
   const e = BY[id];
   if (id === 'formulas') html = formulasHTML();
+  else if (id === 'quiz') html = quizHTML();
   else if (e && e.type === 'lec') html = lectureHTML(e);
   else if (e && e.type === 'rex') html = exampleHTML(e);
   else if (e && (e.type === 'hw' || e.type === 'prac')) html = homeworkHTML(e);

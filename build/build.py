@@ -179,6 +179,29 @@ def parse_boxes(body):
         for b in s["boxes"]: b.pop("_in_explain", None)
     return sections
 
+
+def parse_quiz(text):
+    """## Topic / ### tf T|F [★] / ### mc <letter> [★] / ### num [★]; question lines, '- x) choice', 'answer:', 'why:'."""
+    qs = []; topic = ""; cur = None
+    for ln in text.split("\n"):
+        if ln.startswith("## "): topic = ln[3:].strip(); continue
+        m = re.match(r"^### (tf|mc|num)\s*([A-Za-z]?)\s*(★?)\s*$", ln)
+        if m:
+            cur = {"type": m.group(1), "key": m.group(2).upper(), "star": bool(m.group(3)), "topic": topic, "q": [], "choices": [], "answer": "", "why": ""}
+            qs.append(cur); continue
+        if cur is None or not ln.strip(): continue
+        mc = re.match(r"^- ([a-e])\) (.*)$", ln)
+        if mc: cur["choices"].append([mc.group(1).upper(), mc.group(2)]); continue
+        if ln.startswith("answer:"): cur["answer"] = ln[7:].strip(); continue
+        if ln.startswith("why:"): cur["why"] = ln[4:].strip(); continue
+        cur["q"].append(ln)
+    out = []
+    for i, q in enumerate(qs):
+        out.append({"id": f"Q{i+1}", "type": q["type"], "key": q["key"], "star": q["star"], "topic": q["topic"],
+                    "q": render(" ".join(q["q"]), True), "choices": [[k, render(c, True)] for k, c in q["choices"]],
+                    "answer": render(q["answer"], True), "why": render(q["why"], True)})
+    return out
+
 # ---------------------------------------------------------------- main
 def main():
     site = {"notes": [], "examples": [], "homework": [], "formulas": [],
@@ -254,6 +277,8 @@ def main():
     if os.path.exists(J("content", "templates.md")):
         html_, toc = notes_body(open(J("content", "templates.md"), encoding="utf-8").read(), [], "TPL")
         site["templates"] = {"html": html_, "toc": toc}
+    if os.path.exists(J("content", "quiz.md")):
+        site["quiz"] = parse_quiz(open(J("content", "quiz.md"), encoding="utf-8").read())
     if os.path.exists(J("content", "truefalse.md")):
         html_, toc = notes_body(open(J("content", "truefalse.md"), encoding="utf-8").read(), [], "TF")
         site["truefalse"] = {"html": html_, "toc": toc}
