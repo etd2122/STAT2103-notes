@@ -105,6 +105,11 @@ section.block{display:flex;flex-direction:column;gap:12px}
 .prose p{margin:0 0 12px}
 .prose ul,.prose ol{padding-left:22px;margin:0 0 12px}
 .prose li{margin:3px 0}
+.prose pre{max-width:100%;border-radius:6px;margin:0 0 14px;font-size:12.5px}
+.prose pre code{background:none;padding:0;font-size:inherit}
+.prose > *{min-width:0}
+.prose math[display=block]{overflow-x:auto;max-width:100%}
+.box{min-width:0}
 .prose code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
 .prose blockquote{margin:0 0 12px;padding:8px 14px;border-left:3px solid var(--line);color:var(--muted)}
 .prose img{max-width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:6px;margin:6px 0 14px;background:#fff}
@@ -401,11 +406,11 @@ function sectionsHTML(e, isHW){
 
 // ---------- views
 function lectureHTML(e){
-  const pages = {L01:13,L02:14,L03:10,L04:12,L05:12,L06:10,L07:11,L08:10,L09:12,L10:13,L11:12,L12:12}[e.id];
+  const pages = {L01:13,L02:14,L03:10,L04:12,L05:12,L06:10,L07:11,L08:10,L09:12,L10:13,L11:12,L12:12,L13:8,L14:12}[e.id];
   const ex = exFor(e.id), hw = hwFor(e.id);
   return headHTML(e, 'Lecture notes', fmtDate(e.date)) +
   `<section class="block"><div class="block-h"><h3>Files</h3></div>
-     <div class="files">${fileCard(e.pdf, 'pdf', 'Handwritten notes', pages ? pages + ' pages' : '', e.thumb)}${e.slides ? fileCard(e.slides, 'pdf', 'Lecture slides', 'from class') : ''}</div>
+     <div class="files">${fileCard(e.pdf, 'pdf', e.pdflabel || 'Handwritten notes', pages ? pages + ' pages' : '', e.thumb)}${e.slides ? fileCard(e.slides, 'pdf', 'Lecture slides', 'from class') : ''}</div>
      ${ex.length || hw.length ? `<div class="related">Goes with ${[...ex, ...hw].map(relLink).join('')}</div>` : ''}
    </section>
    <section class="block"><div class="block-h"><h3>Typed notes<span class="count">${e.toc.length} sections</span></h3></div>

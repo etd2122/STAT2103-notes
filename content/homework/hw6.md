@@ -3,7 +3,7 @@ id: HW6
 num: 6
 title: Transformations, outliers and multiple regression
 pdf: assignments/hw6.pdf
-lectures: L11, L12
+lectures: L11, L12, L13, L14
 data: mileage.csv, voting.csv, SENIC.csv
 topics: residual plot, log transformation, interpreting log(y) slope, back-transforming predictions, y outlier, leverage point, influence, multiple regression, holding other variables fixed, t test in multiple regression, F test
 summary: Fix a curved, fanning residual plot with log(mpg); find and judge two outliers in voting data and see which one moves the slope; then a first multiple regression on hospital infection risk, where a coefficient's meaning changes once other variables are held fixed. Parts 3(f)–(g) use the F test from the Nov 4 lecture.
