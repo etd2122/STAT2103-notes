@@ -258,6 +258,47 @@ pre code{font-family:inherit;background:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<style id="design-polish">
+/* Design polish layer: Impeccable craft floor + Emil Kowalski motion rules.
+   Lives after the page's own CSS; delete this block to undo it. */
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-in-out:cubic-bezier(.77,0,.175,1)}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+::selection{background:color-mix(in srgb,var(--accent) 22%,transparent);color:inherit}
+body{caret-color:var(--accent)}
+html,.side,nav.rail,.rail,.toc,pre,.tw{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--ink) 22%,transparent) transparent}
+a{text-underline-offset:.2em;text-decoration-thickness:from-font}
+p,li,dd{text-wrap:pretty}
+h1,h2,h3,h4{text-wrap:balance}
+table{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[id]{scroll-margin-top:16px}
+input[type=checkbox],input[type=radio],progress{accent-color:var(--accent)}
+/* Interaction: name the properties, keep it under 200ms, ease-out, press feedback */
+button,.btn,.chip,a.btn,.item,summary,.rail a,.toc button,.choice,.opt{
+  transition:background-color 150ms ease,border-color 150ms ease,color 150ms ease,box-shadow 150ms ease,transform 160ms var(--ease-out)}
+.btn:not(:disabled):active,.chip:active{transform:scale(.97)}
+button:disabled{cursor:not-allowed}
+details>.body,details>div{animation:polish-open 200ms var(--ease-out)}
+@keyframes polish-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ic{width:1em;height:1em;vertical-align:-.14em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.fill{fill:currentColor;stroke:none}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0ms!important;animation:none!important}
+  button:active,.btn:active,.chip:active{transform:none!important}}
+
+.chunk.key{box-shadow:none;border-color:color-mix(in srgb,var(--mark) 90%,var(--line))}
+.qcard{border-left-width:1px}
+.qcard.right{border-color:color-mix(in srgb,var(--ok) 45%,var(--line));background:color-mix(in srgb,var(--ok-soft) 50%,#fff)}
+.qcard.wrong{border-color:color-mix(in srgb,#b3261e 40%,var(--line));background:color-mix(in srgb,#fbe7e5 55%,#fff)}
+.concept .idea{border:1px solid color-mix(in srgb,var(--ok) 28%,transparent);border-radius:8px}
+.concept .rknow{border-left-width:1px;border-color:color-mix(in srgb,var(--t-rex) 30%,var(--line));border-radius:8px}
+/* Stats as a quiet inline line, not a hero-metric row */
+.guide-stats{gap:4px 20px!important}
+.stat{flex-direction:row!important;align-items:baseline;gap:6px}
+.stat b{font-family:var(--body)!important;font-size:15px!important;font-weight:650}
+.stat span{font-size:14px!important}
+.btn.primary:hover{background:color-mix(in srgb,var(--accent) 88%,black)}
+</style>
 </head>
 <body>
 <div class="app">
