@@ -6,7 +6,7 @@ Typed lecture notes, explained R code, and homework guides for STAT UN2103 (Colu
 
 ## What's on the site
 
-- **Lecture notes (L01–L09):** each handwritten lecture typed up with definitions, formulas, worked examples, and a "Remember for the test" list. The original scanned PDF is linked from each one.
+- **Lecture notes (L01–L15):** each handwritten lecture typed up with definitions, formulas, worked examples, and a "Remember for the test" list. The original scanned PDF is linked from each one.
 - **R examples (R1–R6):** every class notebook split into boxes. Each box has the code with its output and plots on the left, and "What this does" plus an explanation on the right. A yellow edge marks the boxes most likely to matter on an exam.
 - **Homework (HW1–HW4):** each problem with an approach, the notes and R examples to use, and R starter code.
 - **Study guide:** all the "Remember for the test" points on one page.

@@ -92,3 +92,15 @@ Every true/false idea from the Exam 1 practice questions (marked **PE #**), plus
 <li><b class="t">TRUE</b> <span>An outlier in y (with a typical x) mostly inflates $\hat\sigma$, giving wider CIs and larger p-values.</span><em>It barely moves the slope; a leverage point (unusual x) can move it a lot.</em></li>
 <li><b class="f">FALSE</b> <span>You should always remove outliers before fitting.</span><em>Only if impossible or a clear recording error. Otherwise, fit with and without it and compare.</em></li>
 </ul>
+
+## Multiple regression: F tests, R² and adjusted R²
+
+<ul class="tf">
+<li><b class="f">FALSE</b> <span>Running a 5% t test on each slope is the same as the overall F test of $H_0: \beta_1 = \cdots = \beta_p = 0$.</span><em>With many tests, the chance that at least one falsely rejects is more than 5%. The F test keeps it at 5% (L15).</em></li>
+<li><b class="t">TRUE</b> <span>Rejecting the overall F test means at least one predictor is linearly related to y.</span><em>It doesn't say which one(s).</em></li>
+<li><b class="f">FALSE</b> <span>Adding a predictor can make the residual sum of squares larger.</span><em>Never: the bigger model can set the new slope to 0 and copy the smaller one, so RSS goes down or stays the same.</em></li>
+<li><b class="f">FALSE</b> <span>If $R^2$ goes up when you add a predictor, the predictor is useful.</span><em>$R^2$ goes up (or stays the same) for <i>any</i> added predictor, even one with true $\beta_k = 0$.</em></li>
+<li><b class="t">TRUE</b> <span>Adjusted $R^2$ can decrease when a predictor is added.</span><em>It charges for each predictor, so it drops if the predictor doesn't reduce RSS enough.</em></li>
+<li><b class="f">FALSE</b> <span>If the t test for $\beta_k$ isn't significant, $\beta_k = 0$, so drop $x_k$.</span><em>Fail to reject ≠ accept. Dropping predictors by p-value isn't best practice.</em></li>
+<li><b class="t">TRUE</b> <span>The partial F statistic can never be negative.</span><em>$\text{RSS}_{red} \ge \text{RSS}_{full}$, so the numerator is ≥ 0.</em></li>
+</ul>
