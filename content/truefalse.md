@@ -104,3 +104,16 @@ Every true/false idea from the Exam 1 practice questions (marked **PE #**), plus
 <li><b class="f">FALSE</b> <span>If the t test for $\beta_k$ isn't significant, $\beta_k = 0$, so drop $x_k$.</span><em>Fail to reject ≠ accept. Dropping predictors by p-value isn't best practice.</em></li>
 <li><b class="t">TRUE</b> <span>The partial F statistic can never be negative.</span><em>$\text{RSS}_{red} \ge \text{RSS}_{full}$, so the numerator is ≥ 0.</em></li>
 </ul>
+
+## Collinearity and VIF
+
+<ul class="tf">
+<li><b class="f">FALSE</b> <span>If no pair of predictors has a correlation near ±1, there's no collinearity problem.</span><em>With 3+ predictors it can be exact while every pairwise correlation is ≈ 0.7 (L16: $x_3 = (x_1 + x_2)/2$). Check the VIF.</em></li>
+<li><b class="t">TRUE</b> <span>If one predictor is an exact linear combination of others, least squares has no unique solution.</span><em>Many coefficient sets give the same $\hat y$ and the same minimum RSS. R shows <code>NA</code> ("singularities").</em></li>
+<li><b class="f">FALSE</b> <span>Highly (but not perfectly) correlated predictors violate a regression assumption, so the model is invalid.</span><em>No assumption is violated; you can fit and do inference. The slopes just have large SEs. Removing one makes the model more useful.</em></li>
+<li><b class="t">TRUE</b> <span>Collinearity makes it less likely you'll reject $H_0: \beta_k = 0$ even when $\beta_k \neq 0$.</span><em>Large SE → $t$ near 0 → large p-value. Lower power.</em></li>
+<li><b class="f">FALSE</b> <span>Collinearity makes the model's predictions unreliable.</span><em>Predictions stay stable (any $\tilde\beta_1 + \tilde\beta_2 \approx 5$ gives similar $\hat y$). It's the individual slopes that become unstable.</em></li>
+<li><b class="f">FALSE</b> <span>A VIF can be less than 1.</span><em>VIF ≥ 1 always. Above 5 or 10 suggests a problem.</em></li>
+<li><b class="f">FALSE</b> <span>Including $x$ and $x^2$ in the same model always causes collinearity.</span><em>Collinearity is about <i>linear</i> association; corr($x$, $x^2$) can be near 0 depending on the range of $x$.</em></li>
+</ul>
+
