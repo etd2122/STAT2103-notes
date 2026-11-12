@@ -473,7 +473,7 @@ function homeworkHTML(e){
   const prac = e.type === 'prac';
   return headHTML(e, prac ? (e.label || 'Practice exam') : 'Homework') +
   `<section class="block"><div class="block-h"><h3>Files</h3></div>
-     <div class="files">${fileCard(e.pdf, 'pdf', prac ? (e.pdflabel || `Exam ${e.num} practice questions`) : `Homework ${e.num}`, prac ? (e.pdflabel ? 'official answer key' : 'questions + tables') : 'assignment', e.thumb)}${e.solutions ? fileCard(e.solutions, 'pdf', 'Official solutions', 'from the instructor') : ''}</div>
+     <div class="files">${fileCard(e.pdf, 'pdf', prac ? (e.pdflabel || `Exam ${e.num} practice questions`) : `Homework ${e.num}`, e.pdfsub || (prac ? (e.pdflabel ? 'official answer key' : 'questions + tables') : 'assignment'), e.thumb)}${e.solutions ? fileCard(e.solutions, 'pdf', 'Official solutions', 'from the instructor') : ''}</div>
      ${prac ? '' : `<div class="related">Data: ${(e.data||[]).map(d => (S.datasets||[]).includes(d)
         ? `<a class="rel" href="datasets/${esc(d)}" download><b class="tc-hw">CSV</b>${esc(d)}</a>`
         : `<span class="rel" title="Not uploaded yet"><b>CSV</b>${esc(d)} · not uploaded</span>`).join('') || 'none'}</div>`}
