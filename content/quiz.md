@@ -119,3 +119,45 @@ why: It's the reverse. p = 0.03 rejects at 0.05 but not at the stricter 0.01. Re
 ### tf F
 In a simple linear regression with r = 0.6, 60% of the variation in y is explained by its linear relationship with x. *(1C #10)*
 why: $R^2 = r^2 = 0.36$, so 36%.
+
+## Exam 1 (the real exam)
+
+### tf F
+A correlation of zero between two variables X and Y suggests there is no relationship between X and Y. *(Exam 1 #1)*
+why: r only measures **linear** association; a U-shape can have r = 0.
+
+### tf T
+If X and Y are positively correlated, then var(X + Y) > var(X) + var(Y). *(Exam 1 #2)*
+why: $\text{var}(X+Y) = \text{var}(X) + \text{var}(Y) + 2\,\text{cov}(X,Y)$, and cov > 0.
+
+### tf F
+If 90% of New Yorkers wear seat belts, P(8 of 10 sampled drivers do) $= 0.9^8 \cdot 0.1^2$. *(Exam 1 #3)*
+why: Missing the $\binom{10}{8} = 45$ orderings: the answer is $45 \times 0.9^8 \times 0.1^2 \approx 0.19$.
+
+### tf T
+When testing a population mean, if $H_0$ is true, the p-value may take any value from 0 to 1. *(Exam 1 #4)*
+why: It depends on the random sample. Under $H_0$ it's equally likely to land anywhere in [0, 1], which is why P(p < 0.05) = 0.05.
+
+### tf T
+For a CI for μ, a lower confidence level gives a narrower interval, all else equal. *(Exam 1 #5)*
+why: Lower confidence → smaller critical value → smaller margin of error.
+
+### tf F
+In SLR, the residual for observation i is $y_i - (\beta_0 + \beta_1 x_i)$. *(Exam 1 #6)*
+why: That's the **error**. The residual uses the fitted line: $y_i - (\hat\beta_0 + \hat\beta_1 x_i)$.
+
+### tf T
+A positive linear association between X and Y in observational data doesn't necessarily mean increasing X will increase Y. *(Exam 1 #7)*
+why: Association ≠ causation; confounders can drive both.
+
+### tf F
+It's always true that $\sum (y_i - (\hat\beta_0 + \hat\beta_1 x_i))^2 \ge \sum (y_i - (\beta_0 + \beta_1 x_i))^2$. *(Exam 1 #8)*
+why: Backwards: least squares minimizes the sum for this sample, so the fitted line's sum is **≤** the true line's.
+
+### tf F
+To check the Normality assumption in SLR, use a histogram of the response Y. *(Exam 1 #9)*
+why: The assumption is about the errors: use a histogram or Q-Q plot of the **residuals**.
+
+### tf T
+The least squares line's prediction at $X = \bar x$ equals $\bar y$. *(Exam 1 #10)*
+why: The fitted line always passes through $(\bar x, \bar y)$, since $\hat\beta_0 = \bar y - \hat\beta_1 \bar x$.

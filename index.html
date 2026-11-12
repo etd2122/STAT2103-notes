@@ -471,9 +471,9 @@ function homeworkHTML(e){
   const lecs = (e.lectures||[]).map(l => BY[l]).filter(Boolean);
   const exs = [...new Set(lecs.flatMap(l => exFor(l.id)))];
   const prac = e.type === 'prac';
-  return headHTML(e, prac ? 'Practice exam' : 'Homework') +
+  return headHTML(e, prac ? (e.label || 'Practice exam') : 'Homework') +
   `<section class="block"><div class="block-h"><h3>Files</h3></div>
-     <div class="files">${fileCard(e.pdf, 'pdf', prac ? `Exam ${e.num} practice questions` : `Homework ${e.num}`, prac ? 'questions + tables' : 'assignment', e.thumb)}${e.solutions ? fileCard(e.solutions, 'pdf', 'Official solutions', 'from the instructor') : ''}</div>
+     <div class="files">${fileCard(e.pdf, 'pdf', prac ? (e.pdflabel || `Exam ${e.num} practice questions`) : `Homework ${e.num}`, prac ? (e.pdflabel ? 'official answer key' : 'questions + tables') : 'assignment', e.thumb)}${e.solutions ? fileCard(e.solutions, 'pdf', 'Official solutions', 'from the instructor') : ''}</div>
      ${prac ? '' : `<div class="related">Data: ${(e.data||[]).map(d => (S.datasets||[]).includes(d)
         ? `<a class="rel" href="datasets/${esc(d)}" download><b class="tc-hw">CSV</b>${esc(d)}</a>`
         : `<span class="rel" title="Not uploaded yet"><b>CSV</b>${esc(d)} · not uploaded</span>`).join('') || 'none'}</div>`}
@@ -553,8 +553,8 @@ function quizHTML(){
   const topics = [...new Set((S.quiz || []).map(q => q.topic))];
   const st = quizStats(); const list = quizList();
   const chip = (attr, val, cur, label) => `<button type="button" class="chip" data-${attr}="${val}" aria-pressed="${cur === val}">${label}</button>`;
-  return `<header class="head"><div class="eyebrow"><span class="tc-lec">Practice exams · PE1 · 1B · 1C</span></div><h2>Quiz</h2>
-    <p class="lede">${(S.quiz||[]).length} true/false questions from the practice exams (PE1, 1B and 1C). Tap an answer to see why. ★ marks the harder ones. Your progress is saved on this device.</p></header>
+  return `<header class="head"><div class="eyebrow"><span class="tc-lec">Practice exams · PE1 · 1B · 1C · Exam 1</span></div><h2>Quiz</h2>
+    <p class="lede">${(S.quiz||[]).length} true/false questions from the practice exams (PE1, 1B and 1C) and the real Exam 1. Tap an answer to see why. ★ marks the harder ones. Your progress is saved on this device.</p></header>
     <section class="block qbar">
       <div class="q-score"><div><b>${st.r}</b> correct of <b>${st.a}</b> answered${st.a ? ` · ${Math.round(100 * st.r / st.a)}%` : ''}</div><div class="q-meter"><span style="width:${st.n ? 100 * st.a / st.n : 0}%"></span></div><div class="q-sub">${st.a} of ${st.n} done</div></div>
       <label class="q-sel">Topic <select id="qTopic"><option value="all">All topics</option>${topics.map(t => `<option value="${esc(t)}"${qTopic === t ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
