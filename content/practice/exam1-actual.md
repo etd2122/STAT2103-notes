@@ -8,7 +8,7 @@ pdf: assignments/exam1-solutions.pdf
 lectures: L01, L02, L03, L04, L05, L06, L07, L08, L09, L10, L11
 data:
 topics: true/false, correlation vs relationship, var(X+Y), binomial coefficient, p-value under H0, CI width, residual vs error, causation, least squares minimizes RSS, Normality check, line through the means, P(X = a) for continuous, CI interpretation, var of slope, regression to the mean, CI width vs distance from x̄, CI vs PI, R² to r, linear combinations, extrapolation, one-proportion z test, prediction, slope interpretation, significance vs R², non-constant variance
-summary: The real Exam 1 (50 points, 75 minutes) with the instructor's answer key, typed up with the reasoning and the trap behind each question. Answers come from the official solutions (linked below); the "why" and "trap" notes are added. Several questions repeat ideas from the practice exam almost word for word, and those ideas will come back on the final.
+summary: The real Exam 1 (50 points, 75 minutes) with the instructor's answer key, typed up with the reasoning and the trap behind each question. Answers come from the official solutions (linked below); the "why" and "trap" notes are added. For the graded paper with the four missed questions explained, see [EX1R](#EX1R). Several questions repeat ideas from the practice exam almost word for word, and those ideas will come back on the final.
 ---
 
 ## Section 1 · True or false (1 point each)
