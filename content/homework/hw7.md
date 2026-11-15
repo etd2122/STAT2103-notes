@@ -35,13 +35,13 @@ pitfall:
 question: Plot residuals (y-axis) against fitted values (x-axis). Any violations of the model assumptions?
 code:
 ```r
-plot(fitted(fit_full), resid(fit_full),
-     xlab = "Fitted values", ylab = "Residuals", pch = 19)
-abline(h = 0, lty = 2, col = "red")
+plot(fit_full$fitted.values, fit_full$residuals,
+     xlab = "Fitted values", ylab = "Residuals")
+abline(h = 0)        # same as plot(fit_full, which = 1)
 ```
 explain:
 - Residuals sit in a band roughly −3 to +3 around 0 across fitted values 5–12.
-- **No clear violation:** no curve (linearity OK) and no fan (constant variance OK). A small cluster of negative residuals around fitted 7.5–9.5 is too weak to call a pattern.
+- **No clear violation:** residuals are scattered evenly above and below 0 with no obvious pattern: no curve (linearity OK) and no fan (constant variance OK). A small cluster of negative residuals around fitted 7.5–9.5 is too weak to call a pattern.
 idea: In multiple regression you can't draw one scatter plot of y vs. all x's, so residuals vs. $\hat y$ is the one-picture check (L16).
 walk:
 - Look for **shape** (is the center bending?) then **spread** (does the scatter widen?).
@@ -76,7 +76,7 @@ anova(fit_teen, fit_full)    # reduced first, then full
 ```
 explain:
 - RSS drops from 102.06 to 90.22: F = 3.08 on (2, 47) df, **p = 0.055**.
-- p > 0.05: **fail to reject** $H_0$. Once teen birth rates are in the model, drug overdose and firearm death rates together don't significantly improve predictions of a community's poverty rate.
+- p > 0.05: **fail to reject** $H_0: \beta_1 = \beta_2 = 0$. There's no significant evidence that drug overdose deaths or firearm deaths provide additional information about a community's poverty rate, in a linear model that already uses the teen birth rate.
 idea: $f = \dfrac{(\text{RSS}_{red} - \text{RSS}_{full})/2}{\text{RSS}_{full}/47}$. A small RSS improvement relative to leftover noise means the extra predictors aren't worth it.
 walk:
 - `anova(reduced, full)`: read `F` and `Pr(>F)` on the second row.
@@ -98,8 +98,8 @@ AIC(fit_teen, fit_x1x2)
 BIC(fit_teen, fit_x1x2)
 ```
 explain:
-- Adjusted $R^2$: teenbirth **0.615** vs. X1+X2 **0.334**. Residual SE 1.44 vs. 1.90.
-- AIC (R): ≈ 186.1 vs. 215.1; BIC ≈ 191.9 vs. 222.8. Lower is better.
+- Adjusted $R^2$ (the class tool, L15): teenbirth **0.615** vs. X1+X2 **0.334**. Residual SE 1.44 vs. 1.90.
+- Optional backup: AIC (R) ≈ 186.1 vs. 215.1; BIC ≈ 191.9 vs. 222.8. Lower is better. L15 only names AIC/BIC, so lead with adjusted $R^2$.
 - **Choose teenbirth alone:** better on every measure, with one predictor instead of two.
 idea: Neither model's predictors are a subset of the other's, so they're **not nested** and the partial F test doesn't apply. Adjusted $R^2$ (L15) charges for each predictor, so it can compare any two models on the same y.
 walk:
@@ -205,8 +205,8 @@ anova(fit_d, fit_b)
 ```
 explain:
 - $H_0: \beta_{\text{localads}} = 0$ vs. $H_A: \beta_{\text{localads}} \ne 0$.
-- F = 0.653 on (1, 40) df, **p = 0.424**. **Fail to reject.**
-- Once display and national ad spending are known, local media spending adds no significant information about sales.
+- F = 0.653 on (1, 40) df, **p = 0.424**. **Fail to reject** $H_0$.
+- There's no significant evidence that local media advertising provides additional information about sales, in a linear model that already uses in-store display and national advertising spending.
 idea: The models are nested ({displays, national} ⊂ all three), so the partial F test applies.
 walk:
 - Dropping one predictor: this F equals the square of localads' t from (b) ($0.808^2 \approx 0.653$), same p.
@@ -255,7 +255,7 @@ pf(fs["value"], fs["numdf"], fs["dendf"], lower.tail = FALSE)
 ```
 explain:
 - F = 1.334 on (10, 189) df, **p = 0.215**. **Fail to reject.**
-- No evidence that any of the ten predictors is linearly associated with y. ($R^2 = 0.066$.)
+- There's no significant evidence that any of $X_1, \dots, X_{10}$ has a linear relationship with y. ($R^2 = 0.066$.)
 walk:
 - It's the last line of `summary()`; the `pf()` line just pulls it out.
 pitfall:
@@ -269,7 +269,7 @@ code:
 ```
 explain:
 - **No.** They answer different questions with different error rates.
-- **Multiple testing:** with 10 tests at 5%, even if every β is 0, P(at least one rejects) ≈ $1 - 0.95^{10}$ ≈ **0.40**. One "hit" out of ten is what noise often produces. The F test keeps the overall false-alarm rate at 5%.
+- **Multiple testing (L15):** each t test has a 5% chance of a false rejection, but the chance that **at least one** of 10 falsely rejects is much more than 5%: about $1 - 0.95^{10} \approx$ **0.40** if the tests were independent (they aren't exactly, so this is a rough figure). One "hit" out of ten is what noise often produces. The overall F test is built to reject a true $H_0$ exactly 5% of the time.
 - **Dilution:** if X4 has a small real effect, the F test spreads that one signal over 10 df and nine noise predictors drown it out.
 idea: This is the left-handed example from L15: one person rarely is, but at least one in a group often is.
 pitfall:
