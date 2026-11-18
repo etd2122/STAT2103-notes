@@ -117,3 +117,19 @@ Every true/false idea from the Exam 1 practice questions (marked **PE #**), plus
 <li><b class="f">FALSE</b> <span>Including $x$ and $x^2$ in the same model always causes collinearity.</span><em>Collinearity is about <i>linear</i> association; corr($x$, $x^2$) can be near 0 depending on the range of $x$.</em></li>
 </ul>
 
+## Categorical predictors and interactions
+
+<ul class="tf">
+<li><b class="f">FALSE</b> <span>A categorical predictor with 4 levels needs 4 indicator variables.</span><em>k − 1 = 3. The level with no indicator is the baseline; a 4th would be exactly collinear with the intercept (L17).</em></li>
+<li><b class="t">TRUE</b> <span>In $\hat y = \hat\beta_0 + \hat\beta_1 x_{urban} + \hat\beta_2 x_{suburban}$, the intercept is the expected y for the baseline (rural) group.</span><em>All indicators = 0 means rural, a real group, so the intercept is meaningful here.</em></li>
+<li><b class="f">FALSE</b> <span>The coefficient for an indicator is the expected y for that group.</span><em>It's the <b>difference</b> from the baseline. The group's expected y is $\hat\beta_0 + \hat\beta_j$.</em></li>
+<li><b class="f">FALSE</b> <span>Changing the baseline level changes the fitted values and $R^2$.</span><em>Same group means, same $\hat y$, same $R^2$ and F test. Only the coefficients' meaning (and signs) change.</em></li>
+<li><b class="f">FALSE</b> <span>Coding urban = 1, suburban = 2, rural = 3 as one predictor is equivalent to using indicators.</span><em>It forces that order and equal spacing between adjacent categories' averages.</em></li>
+<li><b class="t">TRUE</b> <span>Adding a 0/1 indicator to a model with one quantitative predictor (no interaction) gives two parallel lines.</span><em>The indicator shifts the intercept by $\beta_2$; there's only one slope $\beta_1$.</em></li>
+<li><b class="f">FALSE</b> <span>In $y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1 x_2$ with binary $x_2$, $\beta_1$ is the slope for both groups.</span><em>It's the slope for the $x_2 = 0$ group only. The $x_2 = 1$ slope is $\beta_1 + \beta_3$.</em></li>
+<li><b class="t">TRUE</b> <span>An interaction model with a binary predictor gives the same estimated slopes and intercepts as fitting a separate model to each group.</span><em>Same lines (L18 cats: 58 + 24.46w and 54.14 + 20.86w both ways). Inference differs.</em></li>
+<li><b class="f">FALSE</b> <span>The interaction model and the separate models assume the same thing about the error variance.</span><em>Interaction model: one shared $\sigma^2$. Separate models: each group gets its own variance.</em></li>
+<li><b class="f">FALSE</b> <span>A significant interaction between $x_1$ and $x_2$ means $x_1$ and $x_2$ are highly correlated.</span><em>It means the relationship between $x_1$ and <b>y</b> depends on $x_2$. Correlated predictors is collinearity, a different issue.</em></li>
+<li><b class="t">TRUE</b> <span>With a quantitative × quantitative interaction, the slope for $x_1$ is $\beta_1 + \beta_3 x_2$.</span><em>Rearrange: $\beta_0 + (\beta_1 + \beta_3 x_2)x_1 + \beta_2 x_2$.</em></li>
+<li><b class="f">FALSE</b> <span>In observational data, a significant vaccine × smoking interaction shows the vaccine works less well for smokers.</span><em>Only a proper experiment would justify a causal conclusion (L18).</em></li>
+</ul>

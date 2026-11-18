@@ -126,6 +126,30 @@ Always cover **direction, form, strength, unusual points**.
 "For [units] whose [x] is [k] times as large, we predict [y] to be [$k^{\hat\beta_1}$] times as large, on average. Roughly, a 1% difference in [x] goes with a [$\hat\beta_1$]% difference in [y]."
 :::
 
+## Categorical predictors and interactions
+
+:::template Indicator (binary) coefficient
+"On average, [group with x = 1] have [y] that is [$|\hat\beta|$] [units] [higher / lower] than [group with x = 0][, among units with the same [other predictors]]."
+:::
+
+:::template Coefficient of a k-level categorical predictor
+"On average, [level j] [units] have [y] [$|\hat\beta_j|$] [higher / lower] than [baseline level] [units][, holding [other predictors] constant]."
+
+The intercept is the expected y for the **baseline** level (with all other predictors at 0).
+:::
+
+:::template Interaction term (binary × quantitative)
+"The slope for [x₁] is [$\hat\beta_1$] for [group 0] and [$\hat\beta_1 + \hat\beta_3$] for [group 1]: a 1-[unit] difference in [x₁] is associated with a [$|\hat\beta_3|$] [smaller / larger] average difference in [y] for [group 1] than for [group 0]."
+:::
+
+:::template Conclusion: significant interaction
+"Since the p-value for the interaction term ([p]) is less than α = [0.05], we reject $H_0: \beta_3 = 0$. There is evidence that the relationship between [x₁] and [y] differs depending on [x₂]."
+:::
+
+:::template Interaction between two quantitative predictors
+"Among [units] with the same [x₂], a 1-[unit] difference in [x₁] is associated with an average difference of [$\hat\beta_1$] + [$\hat\beta_3$] × [x₂] in [y]."
+:::
+
 ## Probability
 
 :::template Expected value and SD of a random variable
