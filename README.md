@@ -8,7 +8,7 @@ Typed lecture notes, explained R code, and homework guides for STAT UN2103 (Colu
 
 - **Lecture notes (L01–L19):** each handwritten lecture typed up with definitions, formulas, worked examples, and a "Remember for the test" list. The original scanned PDF is linked from each one.
 - **R examples (R1–R6):** every class notebook split into boxes. Each box has the code with its output and plots on the left, and "What this does" plus an explanation on the right. A yellow edge marks the boxes most likely to matter on an exam.
-- **Homework (HW1–HW7):** each problem with an approach, the notes and R examples to use, and R starter code.
+- **Homework (HW1–HW8):** each problem with an approach, the notes and R examples to use, and R starter code.
 - **Study guide:** all the "Remember for the test" points on one page.
 - **Formula sheet:** every formula box from the notes.
 
@@ -40,4 +40,4 @@ Typed lecture notes, explained R code, and homework guides for STAT UN2103 (Colu
 
 ## Data files
 
-`datasets/` holds the homework data uploaded so far: `hurricanes.csv` (HW4, HW5), `plants.csv` and `salmonella.csv` (HW5), `mileage.csv`, `voting.csv` and `SENIC.csv` (HW6), `poverty.csv`, `CosmeticsSales.csv` and `HW7Q3.csv` (HW7). Each homework page links to its files. Still missing: `scores.csv` (HW1–2), `cars.csv` (HW3), and the class-example data (`hibbs.dat`, `academics.csv`, `language.Rdata`, `rain.csv`). Drop new files into `datasets/` and rebuild, and the links appear automatically.
+`datasets/` holds the homework data uploaded so far: `hurricanes.csv` (HW4, HW5), `plants.csv` and `salmonella.csv` (HW5), `mileage.csv`, `voting.csv` and `SENIC.csv` (HW6), `poverty.csv`, `CosmeticsSales.csv` and `HW7Q3.csv` (HW7), `poverty2.csv` and `rental.csv` (HW8). Each homework page links to its files. Still missing: `scores.csv` (HW1–2), `cars.csv` (HW3), and the class-example data (`hibbs.dat`, `academics.csv`, `language.Rdata`, `rain.csv`). Drop new files into `datasets/` and rebuild, and the links appear automatically.
