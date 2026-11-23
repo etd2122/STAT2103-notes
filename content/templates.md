@@ -150,6 +150,24 @@ The intercept is the expected y for the **baseline** level (with all other predi
 "Among [units] with the same [x₂], a 1-[unit] difference in [x₁] is associated with an average difference of [$\hat\beta_1$] + [$\hat\beta_3$] × [x₂] in [y]."
 :::
 
+## Logistic regression
+
+:::template Odds multiplier, one predictor
+"A 1-[unit] difference in [x] is associated with odds of [Y = 1 outcome] that are [$e^{\hat\beta_1}$] times as large, on average: about [$|e^{\hat\beta_1} - 1| \times 100$]% [higher / lower] odds."
+:::
+
+:::template Odds multiplier, multiple predictors
+"Among [units] with the same [other predictors], a 1-[unit] difference in [x_k] is associated with [$|e^{\hat\beta_k} - 1| \times 100$]% [higher / lower] odds of [Y = 1 outcome]."
+:::
+
+:::template Probability threshold
+"For [x] of [value] and above, we predict at least a [p*] probability of [Y = 1 outcome]." (Solve $\log\frac{p^*}{1-p^*} = \hat\beta_0 + \hat\beta_1 x$.)
+:::
+
+:::template Doubling the odds
+"[Units] with [$\log(2)/\hat\beta_1$] more [x] have predicted odds of [Y = 1 outcome] twice as high."
+:::
+
 ## Probability
 
 :::template Expected value and SD of a random variable

@@ -133,3 +133,19 @@ Every true/false idea from the Exam 1 practice questions (marked **PE #**), plus
 <li><b class="t">TRUE</b> <span>With a quantitative × quantitative interaction, the slope for $x_1$ is $\beta_1 + \beta_3 x_2$.</span><em>Rearrange: $\beta_0 + (\beta_1 + \beta_3 x_2)x_1 + \beta_2 x_2$.</em></li>
 <li><b class="f">FALSE</b> <span>In observational data, a significant vaccine × smoking interaction shows the vaccine works less well for smokers.</span><em>Only a proper experiment would justify a causal conclusion (L18).</em></li>
 </ul>
+
+## Logistic regression
+
+<ul class="tf">
+<li><b class="f">FALSE</b> <span>Logistic regression predicts whether Y is 0 or 1 directly.</span><em>It estimates $P(Y = 1 \mid x)$. Turning that into a 0/1 call is a separate step (L19).</em></li>
+<li><b class="t">TRUE</b> <span>A linear model for a probability can predict values below 0 even at realistic values of x.</span><em>L19: $0.65 - 0.003(225) = -0.025$ for an income of \$225k.</em></li>
+<li><b class="f">FALSE</b> <span>Odds of 4 mean a 4% probability.</span><em>Odds = $p/(1-p)$. Odds 4 ↔ $p = 4/5 = 0.8$ ("4 to 1").</em></li>
+<li><b class="t">TRUE</b> <span>When $p = 0.5$, the log odds are 0.</span><em>Odds = 1 and $\log(1) = 0$. Below 0.5 the log odds are negative, above 0.5 positive.</em></li>
+<li><b class="f">FALSE</b> <span>Odds must be between 0 and 1.</span><em>Probabilities are; odds can be any nonnegative value (p = 0.9 → odds 9).</em></li>
+<li><b class="f">FALSE</b> <span>In logistic regression, $\hat\beta_1$ is the change in probability for a 1-unit difference in x.</span><em>It's the change in <b>log odds</b>. The probability change isn't constant: it's largest in the middle of the S-curve.</em></li>
+<li><b class="t">TRUE</b> <span>A 1-unit difference in x multiplies the predicted odds by $e^{\hat\beta_1}$.</span><em>Additive $\hat\beta_1$ in log odds → multiplicative $e^{\hat\beta_1}$ in odds.</em></li>
+<li><b class="f">FALSE</b> <span>In logistic regression, $\hat\beta_0$ is the height where the curve crosses the y-axis.</span><em>The height at $x = 0$ is $e^{\hat\beta_0}/(1 + e^{\hat\beta_0})$. $\beta_0$ shifts the curve left or right.</em></li>
+<li><b class="t">TRUE</b> <span>A larger $|\beta_1|$ gives a steeper logistic curve, and $\beta_1 < 0$ makes it decrease.</span><em>The sign gives direction, the size gives steepness.</em></li>
+<li><b class="f">FALSE</b> <span>If $\hat\beta_1 = 0.05$, a 2-unit difference in x doubles the odds.</span><em>Odds double when $e^{0.05d} = 2$, so $d = \log 2/0.05 \approx 13.9$.</em></li>
+</ul>
+
